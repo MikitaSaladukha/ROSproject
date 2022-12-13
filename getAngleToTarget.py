@@ -5,14 +5,18 @@ import math;
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
 
-def print_hi(name):
+def print_angle(currentAngle, targetAngle):
     # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
+    print("current angle and target angle")
+    print(currentAngle)  # Press Ctrl+F8 to toggle the breakpoint.
+    print(targetAngle)
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm arguments')
+    targetX=float(3.0)
+    targetY=float(3.0)
+
+
     positionX=float(sys.argv[15])
     positionY=float(sys.argv[17])
     positionZ = float(sys.argv[19])
@@ -26,6 +30,8 @@ if __name__ == '__main__':
     angularX=float(sys.argv[113])
     angularY = float(sys.argv[115])
     angularZ = float(sys.argv[117])
+    angle = orientationZ
+
     print('orientationX=',orientationX,' degrees=',math.degrees(float(orientationX)),'asin=',math.degrees(math.asin(orientationX)))
     print('orientationY=', orientationY,' degrees=',math.degrees(float(orientationY)),'asin=',math.degrees(math.asin(orientationY)))
     print('orientationZ=', orientationZ,' degrees=',math.degrees(float(orientationZ)),'asin=',math.degrees(math.asin(orientationZ)),'acos=',math.degrees(math.acos(orientationZ)),'atan=',math.degrees(math.atan(orientationZ)))
@@ -37,5 +43,8 @@ if __name__ == '__main__':
     print('angularY=', angularY,' degrees=',math.degrees(float(angularY)),'asin=',math.degrees(math.asin(angularY)))
     print('angularZ=', angularZ,' degrees=',math.degrees(float(angularZ))),'asin=',math.degrees(math.asin(angularZ))
 
+    currentAngle=2*math.degrees(math.asin(orientationZ))
+    targetAngle=math.degrees(math.atan((targetY-positionY)/(targetX-positionX)))
+    print_angle(currentAngle,targetAngle)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
