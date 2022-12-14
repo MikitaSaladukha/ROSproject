@@ -7,14 +7,16 @@ import math;
 
 def print_angle(currentAngle, targetAngle):
     # Use a breakpoint in the code line below to debug your script.
+    print(sys.argv[len(sys.argv)-1])
+    print(sys.argv[len(sys.argv) - 2])
     print("current angle and target angle")
     print(currentAngle)  # Press Ctrl+F8 to toggle the breakpoint.
     print(targetAngle)
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    targetX=float(3.0)
-    targetY=float(3.0)
+    targetX=float(sys.argv[len(sys.argv)-2])
+    targetY=float(sys.argv[len(sys.argv)-1])
 
 
     positionX=float(sys.argv[15])
