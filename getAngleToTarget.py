@@ -20,7 +20,9 @@ if __name__ == '__main__':
 
 
     positionX=float(sys.argv[15])
+    print(positionX)
     positionY=float(sys.argv[17])
+    print(positionY)
     positionZ = float(sys.argv[19])
     orientationX=float(sys.argv[22])
     orientationY = float(sys.argv[24])
