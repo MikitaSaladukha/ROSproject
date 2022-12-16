@@ -36,7 +36,7 @@ function roundToTarget() {
     angel_target=${angle[-1]}
     angle_current=${angle[-2]}
     delta="3.0"
-    good=($(python3 isEqualFloat.py $delta $angel_target $angle_current))
+    good=($(python3 compareAngles.py $delta $angel_target $angle_current))
   done
   ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
 }
@@ -85,5 +85,5 @@ function moveToTarget() {
 #XYcurrent=($(python3 getAngleToTarget.py $i $x_target $y_target))
 #echo ${XYcurrent[0]}
 #echo ${XYcurrent[1]}
-roundToTarget "0" "0"
+roundToTarget "1" "-2"
 #moveToTarget "0" "0"
