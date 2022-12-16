@@ -1,10 +1,16 @@
 #!/bin/bash
 source /opt/ros/humble/setup.bash
 
+xTarget=1.0
+yTarget=-1.0
 i=$(ros2 topic echo --once /odom)
-echo $i
-#ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: -0.1, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
-python3 main.py $i
-#sleep 10
-#ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+angle=($(python3 getAngleToTarget.py $i $xTarget $yTarget))
+python3 getAngleToTarget.py $i $xTarget $yTarget
+#<editor-fold desc="Description">
+#echo ${angle[-9]}
+#echo ${angle[-8]}
+#echo "${angle[-7]} ${angle[-6]} ${angle[-5]} ${angle[-4]} ${angle[-3]}"
+#echo ${angle[-2]}
+#echo ${angle[-1]}
+#</editor-fold>
 

@@ -40,8 +40,7 @@ function roundToTarget() {
   done
   ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
 }
-x=6.0
-y=3.0
+
 function moveToTarget() {
   goal="false"
   x_target=$1
@@ -50,15 +49,15 @@ function moveToTarget() {
 
 
     roundToTarget $1 $2
-    sleep 4
-    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.05, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
-    sleep 4
+    #sleep 4
+    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+    sleep 6
     ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
     i=$(ros2 topic echo --once /odom)
     XYcurrent=($(python3 getAngleToTarget.py $i $x_target $y_target))
     Xcurr=${XYcurrent[0]};
     Ycurr=${XYcurrent[1]};
-    delta="0.1"
+    delta="0.2"
     echo $Xcurr
     echo $Ycurr
     echo $delta
@@ -86,5 +85,5 @@ function moveToTarget() {
 #XYcurrent=($(python3 getAngleToTarget.py $i $x_target $y_target))
 #echo ${XYcurrent[0]}
 #echo ${XYcurrent[1]}
-#roundToTarget "6.0" "3.0"
-moveToTarget "6.0" "3.0"
+roundToTarget "0" "0"
+#moveToTarget "0" "0"

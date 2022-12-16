@@ -1,6 +1,7 @@
 # This is a sample Python script.
 import sys;
 import math;
+import numpy;
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
@@ -46,9 +47,16 @@ if __name__ == '__main__':
     print('angularX=', angularX,' degrees=',math.degrees(float(angularX)),'asin=',math.degrees(math.asin(angularX)))
     print('angularY=', angularY,' degrees=',math.degrees(float(angularY)),'asin=',math.degrees(math.asin(angularY)))
     print('angularZ=', angularZ,' degrees=',math.degrees(float(angularZ))),'asin=',math.degrees(math.asin(angularZ))
-
-    currentAngle=2*math.degrees(math.asin(orientationZ))
-    targetAngle=math.degrees(math.atan((targetY-positionY)/(targetX-positionX)))
+    print("orientationZ acos=",2*math.degrees(math.acos(orientationZ)))
+    currentAngle=numpy.sign(orientationW)*2*math.degrees(math.asin(orientationZ))
+    if (targetY-positionY)<0 and (targetX-positionX)<0:
+        targetAngle=-180+math.degrees(math.atan((targetY-positionY) / (targetX-positionX)))
+    #elif (targetY-positionY)<0 and (targetX-positionX)>0:
+     #   targetAngle = 180 + math.degrees(math.atan((targetY - positionY) / (targetX - positionX)))
+    elif (targetY - positionY) > 0 and (targetX - positionX) < 0:
+        targetAngle = -180 + math.degrees(math.atan((targetY - positionY) / (targetX - positionX)))
+    else:
+        targetAngle=math.degrees(math.atan((targetY-positionY)/(targetX-positionX)))
     print_angle(currentAngle,targetAngle)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
