@@ -15,7 +15,7 @@ function turnToTarget() {
   rollingSpeed=($(python3 getRollingSpeed.py ${angle[-1]} ${angle[-2]}))
 
   speedString=" "${rollingSpeed[0]}" "${rollingSpeed[1]}" "${rollingSpeed[2]}" "${rollingSpeed[3]}" "${rollingSpeed[4]}" "${rollingSpeed[5]}" "${rollingSpeed[6]}" "${rollingSpeed[7]}" "${rollingSpeed[8]}" "${rollingSpeed[9]}" "${rollingSpeed[10]}" "${rollingSpeed[11]}" "${rollingSpeed[12]}
-  echo  'RollingSpeed='$speedString
+  echo  'RollingSpeed='$speedString' angle1='${angle[-1]}' angle2='${angle[-2]}
   mycommand='ros2 topic pub --once /cmd_vel geometry_msgs/Twist '$speedString
   eval $mycommand
 }
