@@ -77,6 +77,22 @@ function moveToTarget() {
 
   done
 }
+
+
+k="not_set";
+b="not_set";
+function set_k_b() {
+  i=$(ros2 topic echo --once /odom)
+  XYcurrent=($(python3 getCurrXY.py $i))
+  Xcurr=${XYcurrent[0]};
+  Ycurr=${XYcurrent[1]};
+  x_target=$1;
+  y_target=$2;
+  kb=($(python3 get_k_b_fromX1Y1X2Y2.py $x_target $y_target $Xcurr $Ycurr))
+  k=${kb[0]};
+  b=${kb[1]};
+
+}
 #roundToTarget $x $y
 #x_target=$x
 #y_target=$y
@@ -85,5 +101,21 @@ function moveToTarget() {
 #XYcurrent=($(python3 getAngleToTarget.py $i $x_target $y_target))
 #echo ${XYcurrent[0]}
 #echo ${XYcurrent[1]}
-roundToTarget "1" "-2"
-#moveToTarget "0" "0"
+#roundToTarget "1" "-2"
+#moveToTarget "3" "3"
+set_k_b "0.1" "0.2"
+echo "k="$k
+echo "b="$b
+
+online="not_set";
+function checkOnLine() {
+  i=$(ros2 topic echo --once /odom)
+
+  XYcurrent=($(python3 getCurrXY.py $i))
+  Xcurr=${XYcurrent[0]};
+  Ycurr=${XYcurrent[1]};
+  online=($(python3 isOnLineXYkb.py $Xcurr $Ycurr $k $b))
+}
+
+checkOnLine
+echo $online

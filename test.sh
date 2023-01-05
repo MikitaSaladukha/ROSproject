@@ -1,14 +1,30 @@
 #!/bin/bash
 source /opt/ros/humble/setup.bash
 
-xTarget=1.0
-yTarget=-1.0
+
+#i=$(ros2 topic echo --once /scan -f)
 i=$(ros2 topic echo --once /odom)
-angle=($(python3 getAngleToTarget.py $i $xTarget $yTarget))
-python3 getAngleToTarget.py $i $xTarget $yTarget
+echo $i
+XYcurrent=($(python3 getCurrXY.py $i))
+Xcurr=${XYcurrent[0]};
+Ycurr=${XYcurrent[1]};
+echo $Xcurr
+echo $Ycurr
 
-python3 getRollingSpeed.py ${angle[-1]} ${angle[-2]}
 
+
+#python3 getClosestDistAngle.py $i "1.96"
+
+
+
+#xTarget=1.0
+#yTarget=-1.0
+#i=$(ros2 topic echo --once /odom)
+#angle=($(python3 getAngleToTarget.py $i $xTarget $yTarget))
+#python3 getAngleToTarget.py $i $xTarget $yTarget
+
+#python3 getRollingSpeed.py ${angle[-1]} ${angle[-2]}
+#==============================================
 #<editor-fold desc="Description">
 #echo ${angle[-9]}
 #echo ${angle[-8]}
