@@ -11,11 +11,13 @@ if __name__ == '__main__':
     for i in range(startingI, 720+startingI, 2):
         close=False
         if sys.argv[i]!='.inf':
-            close= float(sys.argv[i])<=float(sys.argv[-1])
+            close= ((float(sys.argv[-2])<=float(sys.argv[i])) and (float(sys.argv[i])<=float(sys.argv[-1])))
         #print("distanse=",sys.argv[i], " in angle=",angle," close=",close)
         if close:
-            print(angle)
-            N=N+1
+            if (angle <=90 | angle>=270):
+                print(angle)
+                print(float(sys.argv[i]))
+                N=N+1
         angle = angle + 1
         print(N)
 

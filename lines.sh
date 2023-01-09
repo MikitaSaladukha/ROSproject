@@ -117,5 +117,62 @@ function checkOnLine() {
   online=($(python3 isOnLineXYkb.py $Xcurr $Ycurr $k $b))
 }
 
-checkOnLine
-echo $online
+function moveToTargetWithStop() {
+  goal="false"
+  near="false"
+  x_target=$1
+  y_target=$2
+  while [ "false" = "$goal" ]; do
+    roundToTarget $1 $2
+    #sleep 4
+    for j in {1..6}; do
+      ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+      i=$(ros2 topic echo --once /scan -f)
+      close=($(python3 getClosestAngleDist.py $i "0" "0.3c"))
+      N=${close[-1]}
+      if [ $N != "0" ]
+        then
+          near="true"
+          ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+        break
+      fi
+      sleep 1
+    done
+    echo "near="$near
+    if [ $near = "true" ]
+      then
+        break
+    fi
+    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+    i=$(ros2 topic echo --once /odom)
+    XYcurrent=($(python3 getAngleToTarget.py $i $x_target $y_target))
+    Xcurr=${XYcurrent[0]};
+    Ycurr=${XYcurrent[1]};
+    delta="0.2"
+    echo $Xcurr
+    echo $Ycurr
+    echo $delta
+    #echo ${XYcurrent[0]}
+    #echo ${XYcurrent[1]}
+    good1=($(python3 isEqualFloat.py $delta $x_target $Xcurr))
+    good2=($(python3 isEqualFloat.py $delta $y_target $Ycurr))
+    echo $good1
+    echo $good2
+    # shellcheck disable=SC1073
+    if [ $good1 = "false" -o $good2 = "false" ]
+    then
+      goal="false"
+    else
+      goal="true"
+    fi
+
+  done
+}
+
+
+targetX="1"
+targetY="0.2"
+#checkOnLine
+#echo $online
+set_k_b $targetX $targetY
+moveToTargetWithStop $targetX $targetY

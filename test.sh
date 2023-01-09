@@ -12,8 +12,8 @@ echo $Xcurr
 echo $Ycurr
 
 
-
-#python3 getClosestDistAngle.py $i "1.96"
+#i=$(ros2 topic echo --once /scan -f)
+#python3 getClosestAngleDist.py $i "1.96"
 
 
 
