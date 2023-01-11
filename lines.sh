@@ -116,7 +116,7 @@ function checkOnLine() {
   Ycurr=${XYcurrent[1]};
   online=($(python3 isOnLineXYkb.py $Xcurr $Ycurr $k $b))
 }
-
+side="none"
 function moveToTargetWithStop() {
   goal="false"
   near="false"
@@ -125,20 +125,20 @@ function moveToTargetWithStop() {
   while [ "false" = "$goal" ]; do
     roundToTarget $1 $2
     #sleep 4
-    for j in {1..6}; do
+    for j in {1..40}; do
       ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
       i=$(ros2 topic echo --once /scan -f)
-      close=($(python3 getClosestAngleDist.py $i "0" "0.3c"))
-      N=${close[-1]}
-      if [ $N != "0" ]
+      close=($(python3 getClosestAngleDist.py $i "0" "0.3"))
+      side=${close[-1]}
+      if [ $side != "none" ]
         then
           near="true"
           ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
         break
       fi
-      sleep 1
+      sleep 0.1
     done
-    echo "near="$near
+    echo "near="$near" side="$side
     if [ $near = "true" ]
       then
         break
@@ -167,12 +167,41 @@ function moveToTargetWithStop() {
     fi
 
   done
+  rollingForOrtogonal $side
 }
+function rollingForOrtogonal() {
+  command="rolling"
+  side=$1
+  while [ "good" != "$command" ]; do
+    i=$(ros2 topic echo --once /scan -f)
+    command1=($(python3 rollingForOrtogonal.py $i $side "0" "0.3"))
+    echo "command1="$command1
+    command=${command1[-1]}
+    echo "command="$command
+    #sleep 4
+    if [ "$command" = "good" ]
+      then
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+    fi
+    if [ "$command" = "round_plus" ]
+      then
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.01}}'
+    fi
+        if [ "$command" = "round_minus" ]
+      then
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: -0.01}}'
 
+    fi
+  done
+
+}
 
 targetX="1"
 targetY="0.2"
 #checkOnLine
 #echo $online
-set_k_b $targetX $targetY
+
+
+#set_k_b $targetX $targetY
 moveToTargetWithStop $targetX $targetY
+#side="right_side"
