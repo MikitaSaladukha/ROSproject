@@ -117,6 +117,7 @@ function checkOnLine() {
   online=($(python3 isOnLineXYkb.py $Xcurr $Ycurr $k $b))
 }
 side="none"
+closeDistance="0.4"
 function moveToTargetWithStop() {
   goal="false"
   near="false"
@@ -124,40 +125,140 @@ function moveToTargetWithStop() {
   y_target=$2
   while [ "false" = "$goal" ]; do
     roundToTarget $1 $2
+
+    i=$(ros2 topic echo --once /scan -f)
+    close=($(python3 getClosestAngleDist.py $i $closeDistance))
+    side=${close[-1]}
+    angle=${close[-2]}
+    echo "close1="${close[-3]}
+    echo "side="$side
+    echo "angle="$angle
+    echo "closest distance="${close[-4]}
+    if [ $side != "none" ]
+      then
+        near="true"
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+        break
+    fi
     #sleep 4
-    for j in {1..40}; do
+    for j in {1..5}; do
       ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+
+
       i=$(ros2 topic echo --once /scan -f)
-      close=($(python3 getClosestAngleDist.py $i "0" "0.3"))
+      close=($(python3 getClosestAngleDist.py $i $closeDistance))
       side=${close[-1]}
+      angle=${close[-2]}
+      echo "close2="${close[-3]}
+      echo "side="$side
+      echo "angle="$angle
+      echo "closest distance="${close[-4]}
       if [ $side != "none" ]
         then
           near="true"
           ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
-        break
+          break
       fi
       sleep 0.1
+
+      i=$(ros2 topic echo --once /scan -f)
+      close=($(python3 getClosestAngleDist.py $i $closeDistance))
+      side=${close[-1]}
+      angle=${close[-2]}
+      echo "close3="${close[-3]}
+      echo "side="$side
+      echo "angle="$angle
+      echo "closest distance="${close[-4]}
+      if [ $side != "none" ]
+        then
+          near="true"
+          ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+          break
+      fi
     done
-    echo "near="$near" side="$side
+    echo "near="$near" side="$side" closest angle="$angle
     if [ $near = "true" ]
       then
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
         break
     fi
-    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+
+    i=$(ros2 topic echo --once /scan -f)
+    close=($(python3 getClosestAngleDist.py $i $closeDistance))
+    side=${close[-1]}
+    angle=${close[-2]}
+    echo "close4="${close[-3]}
+    echo "side="$side
+    echo "angle="$angle
+    echo "closest distance="${close[-4]}
+    if [ $side != "none" ]
+      then
+        near="true"
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+        break
+    fi
+
     i=$(ros2 topic echo --once /odom)
     XYcurrent=($(python3 getAngleToTarget.py $i $x_target $y_target))
     Xcurr=${XYcurrent[0]};
     Ycurr=${XYcurrent[1]};
     delta="0.2"
+
+    i=$(ros2 topic echo --once /scan -f)
+    close=($(python3 getClosestAngleDist.py $i $closeDistance))
+    side=${close[-1]}
+    angle=${close[-2]}
+    echo "close5="${close[-3]}
+    echo "side="$side
+    echo "angle="$angle
+    echo "closest distance="${close[-4]}
+    if [ $side != "none" ]
+      then
+        near="true"
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+        break
+    fi
+
     echo $Xcurr
     echo $Ycurr
     echo $delta
+
+    i=$(ros2 topic echo --once /scan -f)
+    close=($(python3 getClosestAngleDist.py $i $closeDistance))
+    side=${close[-1]}
+    angle=${close[-2]}
+    echo "close6="${close[-3]}
+    echo "side="$side
+    echo "angle="$angle
+    echo "closest distance="${close[-4]}
+    if [ $side != "none" ]
+      then
+        near="true"
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+        break
+    fi
     #echo ${XYcurrent[0]}
     #echo ${XYcurrent[1]}
     good1=($(python3 isEqualFloat.py $delta $x_target $Xcurr))
     good2=($(python3 isEqualFloat.py $delta $y_target $Ycurr))
     echo $good1
     echo $good2
+
+    i=$(ros2 topic echo --once /scan -f)
+    close=($(python3 getClosestAngleDist.py $i $closeDistance))
+    side=${close[-1]}
+    angle=${close[-2]}
+    echo "close7="${close[-3]}
+    echo "side="$side
+    echo "angle="$angle
+    echo "closest distance="${close[-4]}
+    if [ $side != "none" ]
+      then
+        near="true"
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+        break
+    fi
+
     # shellcheck disable=SC1073
     if [ $good1 = "false" -o $good2 = "false" ]
     then
@@ -174,10 +275,11 @@ function rollingForOrtogonal() {
   side=$1
   while [ "good" != "$command" ]; do
     i=$(ros2 topic echo --once /scan -f)
-    command1=($(python3 rollingForOrtogonal.py $i $side "0" "0.3"))
-    echo "command1="$command1
+    command1=($(python3 rollingForOrtogonal.py $i $side))
+    #echo "command1="$command1
     command=${command1[-1]}
     echo "command="$command
+    echo "angle="${command1[0]}
     #sleep 4
     if [ "$command" = "good" ]
       then
@@ -193,15 +295,34 @@ function rollingForOrtogonal() {
 
     fi
   done
+  movingFront
+}
 
+function movingFront() {
+  moving="moving"
+  ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.2, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+  #sleep 2
+  while [ "moving" = "$moving" ]; do
+    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.2, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+    i=$(ros2 topic echo --once /scan -f)
+    moving=($(python3 movingFront.py $i $side "0.2" "0.5"))
+    echo "moving="$moving
+  done
+  ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
 }
 
 targetX="1"
-targetY="0.2"
+targetY="0.4"
 #checkOnLine
 #echo $online
 
 
 #set_k_b $targetX $targetY
+
+
+
 moveToTargetWithStop $targetX $targetY
+#roundToTarget $targetX $targetY
+
 #side="right_side"
+
