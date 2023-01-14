@@ -14,16 +14,12 @@ if __name__ == '__main__':
     closeFound=False
     for i in range(startingI, 720+startingI, 2):
         if sys.argv[i]!='.inf':
-            close=(float(sys.argv[i])<=float(sys.argv[-1]))
-            if close: closeFound=True
-        #print("distanse=",sys.argv[i], " in angle=",angle," close=",close)
-        if closeFound and sys.argv[i]!='.inf':
             if closest > float(sys.argv[i]):
                 closest = float(sys.argv[i])
                 closestAngle = angle
 
         angle = angle + 1
-    if close:
+    if closest<=float(sys.argv[-1]):
         if closestAngle <= 90: side = "left_side"
         if closestAngle >= 270: side = "right_side"
     print(closest)
