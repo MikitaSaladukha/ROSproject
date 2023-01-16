@@ -268,7 +268,7 @@ function moveToTargetWithStop() {
     fi
 
   done
-  rollingForOrtogonal $side
+
 }
 function rollingForOrtogonal() {
   command="rolling"
@@ -295,7 +295,7 @@ function rollingForOrtogonal() {
 
     fi
   done
-  movingFront
+
 }
 
 function movingFront() {
@@ -322,6 +322,11 @@ targetY="0.4"
 
 
 moveToTargetWithStop $targetX $targetY
+echo "moveToTargetWithStop DONE"
+rollingForOrtogonal $side
+echo "rollingForOrtogonal DONE"
+movingFront
+echo "movingFront DONE"
 #roundToTarget $targetX $targetY
 
 #side="right_side"
