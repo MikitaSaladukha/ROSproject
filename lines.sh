@@ -311,6 +311,30 @@ function movingFront() {
   ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
 }
 
+function turn90() {
+  side=$1
+  i=$(ros2 topic echo --once /odom)
+  angle=($(python3 getAngleToTarget2.py $i $side))
+  angel_target=${angle[-1]}
+  angle_current=${angle[-2]}
+  good="false"
+  while [ "false" = "$good" ]; do
+    i=$(ros2 topic echo --once /odom)
+    angle=($(python3 getAngleToTarget2.py $i $side))
+    angle_current=${angle[-2]}
+    delta="3.0"
+    good=($(python3 compareAngles.py $delta $angel_target $angle_current))
+
+    rollingSpeed=($(python3 getRollingSpeed.py ${angle[-1]} ${angle[-2]}))
+
+    speedString=" "${rollingSpeed[0]}" "${rollingSpeed[1]}" "${rollingSpeed[2]}" "${rollingSpeed[3]}" "${rollingSpeed[4]}" "${rollingSpeed[5]}" "${rollingSpeed[6]}" "${rollingSpeed[7]}" "${rollingSpeed[8]}" "${rollingSpeed[9]}" "${rollingSpeed[10]}" "${rollingSpeed[11]}" "${rollingSpeed[12]}
+    echo  'RollingSpeed='$speedString' angle1='${angle[-1]}' angle2='${angle[-2]}
+    mycommand='ros2 topic pub --once /cmd_vel geometry_msgs/Twist '$speedString
+    eval $mycommand
+  done
+  ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+}
+
 targetX="1"
 targetY="0.4"
 #checkOnLine
@@ -328,6 +352,7 @@ echo "rollingForOrtogonal DONE"
 movingFront
 echo "movingFront DONE"
 #roundToTarget $targetX $targetY
-
+turn90 $side
+echo "turn90 DONE"
 #side="right_side"
 
