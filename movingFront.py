@@ -11,11 +11,12 @@ if __name__ == '__main__':
     N=0
     side=sys.argv[-2]
     close = False
+    far = True
     for i in range(startingI, 720+startingI, 2):
-        far=True
+
         if sys.argv[i]!='.inf' and far:
             far=(float(sys.argv[i])>float(sys.argv[-1]))
-        if sys.argv[i] != '.inf' and (angle<280 or angle>80):
+        if sys.argv[i] != '.inf' and (angle>275 or angle<85):
             if (close==False):close=(float(sys.argv[i])<float(sys.argv[-2]))
 
         angle = angle + 1
