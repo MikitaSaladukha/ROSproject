@@ -20,8 +20,8 @@ if __name__ == '__main__':
 
         angle = angle + 1
     if closest<=float(sys.argv[-1]):
-        if closestAngle <= 90: side = "left_side"
-        if closestAngle >= 270: side = "right_side"
+        if closestAngle < 90: side = "left_side"
+        if closestAngle > 270: side = "right_side"
     print(closest)
     print(close)
     print(closestAngle)

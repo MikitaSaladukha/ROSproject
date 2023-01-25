@@ -317,6 +317,8 @@ online="False"
 function archMotion() {
     while [ "false" = "$goal" ]; do
         online="False"
+        side="none"
+        echo "moveToTargetWithStop START"
         moveToTargetWithStop $targetX $targetY
         echo "moveToTargetWithStop DONE"
 
@@ -329,9 +331,10 @@ function archMotion() {
         while [ "$online" = "False" ]; do
             set_distanceL $targetX $targetY
             #L1=$distanceL
-
+            echo "rollingForOrtogonal START"
             rollingForOrtogonal $side
             echo "rollingForOrtogonal DONE"
+            echo "movingFront START"
             movingFront
             if [ "$online" = "True" ]
               then
@@ -339,12 +342,12 @@ function archMotion() {
                 break
             fi
             echo "movingFront DONE"
-
+            echo "turn90 START"
             turn90 $side
             echo "turn90 DONE"
             set_distanceL $targetX $targetY
             #L2=$distanceL
-
+            echo "movingFront2 START"
             movingFront
             if [ "$online" = "True" ]
               then

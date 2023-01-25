@@ -19,7 +19,7 @@ if __name__ == '__main__':
         if numpy.sign(angle1) < 0:
             angle1=angle1+360
         else:  angle2=angle2+360
-    rollingSpeed=0.05*numpy.sign(float(angle1) -float(angle2))
-    if kostil: rollingSpeed=-0.05
+    rollingSpeed=0.03*numpy.sign(float(angle1) -float(angle2))
+    if kostil: rollingSpeed=-0.03
     print("'{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z:",rollingSpeed,"}}'")
     #print ("  angle1>=-90.0 and angle2>0.0 and angle2<=90.0: numpy.sign(angle1)==-1 :" , angle1>=-90.0, angle2>0.0 , angle2<=90.0,angle1)

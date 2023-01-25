@@ -7,5 +7,5 @@ if __name__ == '__main__':
     x=float(sys.argv[2])
     k=float(sys.argv[3])
     b=float(sys.argv[4])
-    online=((y-k*x+b)<0.02)
+    online=(math.fabs(y-k*x-b)<0.06)
     print(online)
