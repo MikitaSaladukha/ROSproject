@@ -130,7 +130,29 @@ function moveToTargetWithStop() {
   x_target=$1
   y_target=$2
   while [ "false" = "$goal" ]; do
+
     roundToTarget $1 $2
+
+
+    echo "check GOAL"
+    i=$(ros2 topic echo --once /odom)
+    XYcurrent=($(python3 getAngleToTarget.py $i $x_target $y_target))
+    Xcurr=${XYcurrent[0]};
+    Ycurr=${XYcurrent[1]};
+    delta="0.25"
+    good1=($(python3 isEqualFloat.py $delta $x_target $Xcurr))
+    good2=($(python3 isEqualFloat.py $delta $y_target $Ycurr))
+    # shellcheck disable=SC1073
+    if [ $good1 = "false" -o $good2 = "false" ]
+    then
+      goal="false"
+    else
+      echo "goal REACHED"
+      ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+      goal="true"
+      break
+    fi
+    echo "goal check DONE"
 
     i=$(ros2 topic echo --once /scan -f)
     close=($(python3 getClosestAngleDist.py $i $closeDistance))
@@ -177,7 +199,7 @@ function moveToTargetWithStop() {
     XYcurrent=($(python3 getAngleToTarget.py $i $x_target $y_target))
     Xcurr=${XYcurrent[0]};
     Ycurr=${XYcurrent[1]};
-    delta="0.2"
+    delta="0.25"
     good1=($(python3 isEqualFloat.py $delta $x_target $Xcurr))
     good2=($(python3 isEqualFloat.py $delta $y_target $Ycurr))
     # shellcheck disable=SC1073
@@ -213,7 +235,7 @@ function moveToTargetWithStop() {
     XYcurrent=($(python3 getAngleToTarget.py $i $x_target $y_target))
     Xcurr=${XYcurrent[0]};
     Ycurr=${XYcurrent[1]};
-    delta="0.2"
+    delta="0.25"
     good1=($(python3 isEqualFloat.py $delta $x_target $Xcurr))
     good2=($(python3 isEqualFloat.py $delta $y_target $Ycurr))
     # shellcheck disable=SC1073
@@ -261,17 +283,23 @@ function rollingForOrtogonal() {
 moving="moving"
 function movingFront() {
   moving="moving"
-  ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+  ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.06, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
   #sleep 2
   while [ "moving" = "$moving" ]; do
-    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.05, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
-    i=$(ros2 topic echo --once /scan -f)
-    moving=($(python3 movingFront.py $i $side "0.2" "0.27"))
+    echo "checkOnline START"
     checkOnLine
+    echo "checkOnline DONE; online="$online
     if [ "$online" = "True" ]
       then
+        echo "moving online"
         moving="online"
+        break
     fi
+
+    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.03, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+    i=$(ros2 topic echo --once /scan -f)
+    moving=($(python3 movingFront.py $i $side "0.27" "0.37"))
+
     echo "moving="$moving
   done
   ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
@@ -327,13 +355,12 @@ function archMotion() {
             echo "goal REACHED"
             break
         fi
-
+        set_distanceL $targetX $targetY
+        #L1=$distanceL
+        echo "rollingForOrtogonal START"
+        rollingForOrtogonal $side
+        echo "rollingForOrtogonal DONE"
         while [ "$online" = "False" ]; do
-            set_distanceL $targetX $targetY
-            #L1=$distanceL
-            echo "rollingForOrtogonal START"
-            rollingForOrtogonal $side
-            echo "rollingForOrtogonal DONE"
             echo "movingFront START"
             movingFront
             if [ "$online" = "True" ]
@@ -342,23 +369,21 @@ function archMotion() {
                 break
             fi
             echo "movingFront DONE"
-            echo "turn90 START"
-            turn90 $side
-            echo "turn90 DONE"
-            set_distanceL $targetX $targetY
-            #L2=$distanceL
-            echo "movingFront2 START"
-            movingFront
-            if [ "$online" = "True" ]
+            if [ "$moving" = "far" ]
               then
-                echo "moving online"
-                break
+                echo "turn90 START"
+                turn90 $side
+                echo "turn90 DONE"
             fi
-            echo "movingFront2 DONE"
-            set_distanceL $targetX $targetY
-            #L3=$distanceL
+            if [ "$moving" = "obstacle" ]
+              then
+                echo "rollingForOrtogonal START"
+                rollingForOrtogonal $side
+                echo "rollingForOrtogonal DONE"
+            fi
         done
-
+        set_distanceL $targetX $targetY
+        #L3=$distanceL
     done
 }
 
