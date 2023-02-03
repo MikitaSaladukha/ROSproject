@@ -103,24 +103,18 @@ function set_distanceL() {
   y_target=$2;
   distanceL=($(python3 getDistance.py $x_target $y_target $Xcurr $Ycurr))
 }
-#roundToTarget $x $y
-#x_target=$x
-#y_target=$y
-##ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
-#i=$(ros2 topic echo --once /odom)
-#XYcurrent=($(python3 getAngleToTarget.py $i $x_target $y_target))
-#echo ${XYcurrent[0]}
-#echo ${XYcurrent[1]}
-#roundToTarget "1" "-2"
-#moveToTarget "3" "3"
 
+online="False"
 function checkOnLine() {
   i=$(ros2 topic echo --once /odom)
 
   XYcurrent=($(python3 getCurrXY.py $i))
   Xcurr=${XYcurrent[0]};
   Ycurr=${XYcurrent[1]};
+  #echo "Xcurr="$Xcurr" Ycurr="$Ycurr
   online=($(python3 isOnLineXYkb.py $Xcurr $Ycurr $k $b))
+
+
 }
 side="none"
 closeDistance="0.4"
@@ -168,7 +162,7 @@ function moveToTargetWithStop() {
         ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
         break
     fi
-    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.07, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
     #sleep 4
 
     echo "near="$near" side="$side" closest angle="$angle
@@ -322,27 +316,29 @@ function turn90() {
     rollingSpeed=($(python3 getRollingSpeed.py $angel_target $angle_current))
 
     speedString=" "${rollingSpeed[0]}" "${rollingSpeed[1]}" "${rollingSpeed[2]}" "${rollingSpeed[3]}" "${rollingSpeed[4]}" "${rollingSpeed[5]}" "${rollingSpeed[6]}" "${rollingSpeed[7]}" "${rollingSpeed[8]}" "${rollingSpeed[9]}" "${rollingSpeed[10]}" "${rollingSpeed[11]}" "${rollingSpeed[12]}
-    echo  'RollingSpeed='$speedString' angle1='${angle[-1]}' angle2='${angle[-2]}
+    echo  'Turn90: RollingSpeed='$speedString' angle1='${angle[-1]}' angle2='${angle[-2]}
     mycommand='ros2 topic pub --once /cmd_vel geometry_msgs/Twist '$speedString
     eval $mycommand
   done
   ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
 }
 
-targetX="1"
-targetY="0.4"
+targetX="9"
+targetY="0"
 
 set_k_b $targetX $targetY
 echo "k="$k
 echo "b="$b
 
-online="False"
+
 #checkOnLine
 #echo $online
 #set_k_b $targetX $targetY
 
 
 function archMotion() {
+    time1=($(python3 getTime.py))
+    echo "Start time="$time1
     while [ "false" = "$goal" ]; do
         online="False"
         side="none"
@@ -385,6 +381,8 @@ function archMotion() {
         set_distanceL $targetX $targetY
         #L3=$distanceL
     done
+    time=($(python3 getTime.py))
+    echo "Start time="$time1" End time="$time
 }
 
 archMotion
