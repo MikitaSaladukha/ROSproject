@@ -330,6 +330,15 @@ set_k_b $targetX $targetY
 echo "k="$k
 echo "b="$b
 
+Lcloser="False"
+closeExtent="0.5"
+function closer() {
+    L1=$1
+    L2=$2
+    diffL=($(python3 diffF1_F2.py $L1 $L2))
+    diffExtent=($(python3 diffF1_F2.py $diffL $closeExtent))
+    Lcloser=($(python3 biggerThanZero.py $diffExtent))
+}
 
 #checkOnLine
 #echo $online
@@ -352,14 +361,25 @@ function archMotion() {
             break
         fi
         set_distanceL $targetX $targetY
-        #L1=$distanceL
+        L1=$distanceL
+        echo "L1="$L1
         echo "rollingForOrtogonal START"
         rollingForOrtogonal $side
         echo "rollingForOrtogonal DONE"
-        while [ "$online" = "False" ]; do
+        while [ "$online" = "False" -o "$Lcloser" = "False" ]; do
             echo "movingFront START"
             movingFront
-            if [ "$online" = "True" ]
+
+          ##########################################
+            set_distanceL $targetX $targetY
+            L2=$distanceL
+            echo "L2="$L2
+            closer $L1 $L2
+            echo "Lcloser="$Lcloser
+         ##############################################
+
+
+            if [ "$online" = "True" -a "$Lcloser" = "True" ]
               then
                 echo "moving online"
                 break
@@ -367,6 +387,7 @@ function archMotion() {
             echo "movingFront DONE"
             if [ "$moving" = "far" ]
               then
+                ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: -0.025, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
                 echo "turn90 START"
                 turn90 $side
                 echo "turn90 DONE"

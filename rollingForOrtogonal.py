@@ -21,18 +21,18 @@ if __name__ == '__main__':
         angle = angle + 1
     print(closestAngle)
     if (side=="right_side"):
-        if closestAngle<275 and closestAngle>265:
+        if closestAngle<265 and closestAngle>=258:
             print("good")
-        if closestAngle>275 or closestAngle<90:
+        if closestAngle>=265 or closestAngle<90:
             print("round_plus")
-        if closestAngle<265 and closestAngle>=90:
+        if closestAngle<258 and closestAngle>=90:
             print("round_minus")
     if (side=="left_side"):
-        if closestAngle<95 and closestAngle>85:
+        if closestAngle<=103 and closestAngle>95:
             print("good")
-        if closestAngle>95 and closestAngle<=270:
+        if closestAngle>103 and closestAngle<=270:
             print("round_plus")
-        if closestAngle<85 or closestAngle>270:
+        if closestAngle<=95 or closestAngle>270:
             print("round_minus")
 
 
