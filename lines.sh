@@ -366,14 +366,15 @@ function archMotion() {
         echo "rollingForOrtogonal START"
         rollingForOrtogonal $side
         echo "rollingForOrtogonal DONE"
+        echo "L1="$L1
         while [ "$online" = "False" -o "$Lcloser" = "False" ]; do
             echo "movingFront START"
             movingFront
-
+            echo "movingFront DONE"
           ##########################################
             set_distanceL $targetX $targetY
             L2=$distanceL
-            echo "L2="$L2
+            echo "L2="$L2"; L1="$L1
             closer $L1 $L2
             echo "Lcloser="$Lcloser
          ##############################################
@@ -381,10 +382,10 @@ function archMotion() {
 
             if [ "$online" = "True" -a "$Lcloser" = "True" ]
               then
-                echo "moving online"
+                echo "moving online and closer"
                 break
             fi
-            echo "movingFront DONE"
+
             if [ "$moving" = "far" ]
               then
                 ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: -0.025, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
