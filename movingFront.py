@@ -20,7 +20,7 @@ if __name__ == '__main__':
         if sys.argv[i] != '.inf' and (angle>330 or angle<30):
             if (close==False):close=(float(sys.argv[i])<float(sys.argv[-2]))
         if sys.argv[i] != '.inf' and (angle>275 or angle<84):
-            if (close==False):close=(float(sys.argv[i])<0.15)#float(sys.argv[-2]))
+            if (close==False):close=(float(sys.argv[i])<0.215)#float(sys.argv[-2]))
 
 
         angle = angle + 1
