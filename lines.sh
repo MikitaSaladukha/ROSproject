@@ -323,15 +323,26 @@ function turn90() {
   ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
 }
 
-targetX="9"
-targetY="0"
+
+#cabinet begin
+#targetX="7"
+#targetY="-3"
+#cabinet end
+
+#cubes cilinders begin
+#targetX="9"
+#targetY="0"
+#cubes cilinders end
+
+targetX="7"
+targetY="-3"
 
 set_k_b $targetX $targetY
 echo "k="$k
 echo "b="$b
 
 Lcloser="False"
-closeExtent="0.5"
+closeExtent="0.09"
 function closer() {
     L1=$1
     L2=$2
@@ -407,5 +418,61 @@ function archMotion() {
     echo "Start time="$time1" End time="$time
 }
 
-archMotion
 
+function rollingForEdgeOfObstacle() {
+  command="rolling"
+  side=$1
+  while [ "good" != "$command" ]; do
+    i=$(ros2 topic echo --once /scan -f)
+    command1=($(python3 rollingForEdge.py $i $side))
+    #echo "command1="$command1
+    command=${command1[-1]}
+    echo "command="$command
+    echo "angle="${command1[0]}
+    #sleep 4
+    if [ "$command" = "good" ]
+      then
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+    fi
+    if [ "$command" = "round_plus" ]
+      then
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.01}}'
+    fi
+        if [ "$command" = "round_minus" ]
+      then
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: -0.01}}'
+
+    fi
+  done
+
+}
+
+closeDistance2="3.3"
+function archMotion2() {
+    time1=($(python3 getTime.py))
+    echo "Start time="$time1
+    roundToTarget $targetX $targetY
+    i=$(ros2 topic echo --once /scan -f)
+    close=($(python3 getCandidateAngleSector.py $i $closeDistance2))
+    numberOfCandidateSectors=${close[0]}
+    #angle=${close[-2]}
+    #echo "numberOfCandidateSectors="${close[-3]}
+    i=0
+    echo "numberOfCandidateSectors="$numberOfCandidateSectors
+
+    while [ $i -lt $numberOfCandidateSectors ]; do
+      start=$((1+$i*2))
+      end=$(($i*2+2))
+      i=$(($i+1))
+	    echo "angleSector"$i"=["${close[$start]}","${close[$end]}}"]"
+    done
+    #echo "angle1="${close[1]}${close[2]}${close[3]}${close[4]}
+    #echo "closest distance="${close[-4]}
+
+
+    time=($(python3 getTime.py))
+    echo "Start time="$time1" End time="$time
+}
+
+#archMotion
+archMotion2
