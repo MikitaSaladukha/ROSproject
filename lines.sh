@@ -335,7 +335,7 @@ function turn90() {
 #cubes cilinders end
 
 targetX="7"
-targetY="-3"
+targetY="5"
 
 set_k_b $targetX $targetY
 echo "k="$k
@@ -452,8 +452,14 @@ function archMotion2() {
     time1=($(python3 getTime.py))
     echo "Start time="$time1
     roundToTarget $targetX $targetY
+    i=$(ros2 topic echo --once /odom)
+    angle=($(python3 getAngleToTarget.py $i $x_target $y_target))
+    angel_target=${angle[-1]}
+    angle_current=${angle[-2]}
+    echo "angel_target="$angel_target
+    echo "angle_current="$angle_current
     i=$(ros2 topic echo --once /scan -f)
-    close=($(python3 getCandidateAngleSector.py $i $closeDistance2))
+    close=($(python3 getCandidateAngleSector.py $i $angle_current $angel_target $closeDistance2))
     numberOfCandidateSectors=${close[0]}
     #angle=${close[-2]}
     #echo "numberOfCandidateSectors="${close[-3]}
@@ -464,7 +470,7 @@ function archMotion2() {
       start=$((1+$i*2))
       end=$(($i*2+2))
       i=$(($i+1))
-	    echo "angleSector"$i"=["${close[$start]}","${close[$end]}}"]"
+	    echo "angleSector"$i"=["${close[$start]}","${close[$end]}"]"
     done
     #echo "angle1="${close[1]}${close[2]}${close[3]}${close[4]}
     #echo "closest distance="${close[-4]}
