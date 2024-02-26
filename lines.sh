@@ -334,8 +334,8 @@ function turn90() {
 #targetY="0"
 #cubes cilinders end
 
-targetX="7"
-targetY="5"
+targetX="9"
+targetY="0"
 
 set_k_b $targetX $targetY
 echo "k="$k
@@ -447,6 +447,40 @@ function rollingForEdgeOfObstacle() {
 
 }
 
+function turnToTargetAngle() {
+  source /opt/ros/humble/setup.bash
+  angleTarget=$1
+  angleCurrent=$2
+  rollingSpeed=($(python3 getRollingSpeed.py $angleTarget $angleCurrent))
+
+  speedString=" "${rollingSpeed[0]}" "${rollingSpeed[1]}" "${rollingSpeed[2]}" "${rollingSpeed[3]}" "${rollingSpeed[4]}" "${rollingSpeed[5]}" "${rollingSpeed[6]}" "${rollingSpeed[7]}" "${rollingSpeed[8]}" "${rollingSpeed[9]}" "${rollingSpeed[10]}" "${rollingSpeed[11]}" "${rollingSpeed[12]}
+  echo  'RollingSpeed='$speedString' angle1='${angle[-1]}' angle2='${angle[-2]}
+  mycommand='ros2 topic pub --once /cmd_vel geometry_msgs/Twist '$speedString
+  eval $mycommand
+}
+
+function roundToTargetAngle() {
+  angleTarget=$1
+  #angleCurrent=$2
+  good="false"
+
+  while [ "false" = "$good" ]
+  do
+    i=$(ros2 topic echo --once /odom)
+    angle=($(python3 getAngleToTargetAngle.py $i))
+    angleCurrent=${angle[-1]}
+    echo "current angle="$angleCurrent
+    turnToTargetAngle $angleTarget $angleCurrent
+    i=$(ros2 topic echo --once /odom)
+    angle=($(python3 getAngleToTargetAngle.py $i))
+    angleCurrent=${angle[-1]}
+    echo "current angle="$angleCurrent
+    delta="3.0"
+    good=($(python3 compareAngles.py $delta $angleTarget $angleCurrent))
+  done
+  ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+}
+
 closeDistance2="3.3"
 function archMotion2() {
     time1=($(python3 getTime.py))
@@ -472,8 +506,8 @@ function archMotion2() {
       i=$(($i+1))
 	    echo "angleSector"$i"=["${close[$start]}","${close[$end]}"]"
     done
-    #echo "angle1="${close[1]}${close[2]}${close[3]}${close[4]}
-    #echo "closest distance="${close[-4]}
+    #target angle currenctly = 90
+    roundToTargetAngle 90
 
 
     time=($(python3 getTime.py))

@@ -36,7 +36,7 @@ if __name__ == '__main__':
     broadCandidateSectors = []
     for candidate in candidateSectors:
         if (candidate[1]-candidate[0] >= 180 or 2*RForCandidate*RForCandidate*(1-math.cos(math.radians(candidate[1]-candidate[0]))) <= 0.2):
-            broadCandidateSectors.append(candidate[0],candidate[1])
+            broadCandidateSectors.append([candidate[0],candidate[1]])
 
     print(len(broadCandidateSectors))
     for candidate in broadCandidateSectors:
