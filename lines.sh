@@ -506,8 +506,10 @@ function archMotion2() {
       i=$(($i+1))
 	    echo "angleSector"$i"=["${close[$start]}","${close[$end]}"]"
     done
+
+    echo "turn_target="${close[$(($end+1))]}
     #target angle currenctly = 90
-    roundToTargetAngle 90
+    #roundToTargetAngle -90
 
 
     time=($(python3 getTime.py))
