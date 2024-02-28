@@ -509,7 +509,7 @@ function archMotion2() {
 	    echo "angleSector"$i"=["${close[$start]}","${close[$end]}"] in distances=["${close[$obstacleStart]}","${close[$obstacleEnd]}"]"
     done
 
-    echo "turn_target="${close[$(($end+1))]}
+    echo "turn_target="${close[$(($obstacleEnd+1))]}
     #target angle currenctly = 90
     #roundToTargetAngle -90
 

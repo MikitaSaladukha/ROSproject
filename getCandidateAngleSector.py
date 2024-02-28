@@ -2,6 +2,43 @@ import sys;
 import math;
 import numpy;
 #copy from getClosestAngleDist.py
+
+
+def getTempTurnTargetDeltaAndRangeDistance(broadCandidateSectors,i,relative_target_angle,initial_temp_turn_target_delta):
+    turn_target_delta = initial_temp_turn_target_delta
+    if broadCandidateSectors[i][0] < broadCandidateSectors[i][1]:
+        if relative_target_angle >= broadCandidateSectors[i][0] and relative_target_angle <= broadCandidateSectors[i][1]:
+            turn_target_delta = 0.0
+            rangeDistance = 3.5
+        elif relative_target_angle < broadCandidateSectors[i][0]:
+            turn_target_delta = broadCandidateSectors[i][0]
+            rangeDistance = broadCandidateSectors[i][2]
+        elif relative_target_angle > broadCandidateSectors[i][1]:
+            temp_turn_target_delta = broadCandidateSectors[i][1] - 360
+            if math.fabs(temp_turn_target_delta) < math.fabs(turn_target_delta):
+                turn_target_delta = temp_turn_target_delta
+                rangeDistance = broadCandidateSectors[i][3]
+    if broadCandidateSectors[i][0] > broadCandidateSectors[i][1]:
+        if relative_target_angle <= broadCandidateSectors[i][1] or relative_target_angle >= broadCandidateSectors[0][0]:
+            turn_target_delta = 0.0
+            rangeDistance = 3.5
+        elif relative_target_angle <= broadCandidateSectors[i][0] :
+            if broadCandidateSectors[i][0] > 270:
+                turn_target_delta = broadCandidateSectors[i][0] - 360
+                rangeDistance = broadCandidateSectors[i][2]
+            else:
+                turn_target_delta = broadCandidateSectors[i][0]
+                rangeDistance = broadCandidateSectors[i][2]
+        elif relative_target_angle > broadCandidateSectors[i][1]:
+            if broadCandidateSectors[i][1] > 270:
+                temp_turn_target_delta = broadCandidateSectors[i][1] - 360
+            else:
+                temp_turn_target_delta = broadCandidateSectors[i][1]
+            if math.fabs(temp_turn_target_delta) < math.fabs(turn_target_delta):
+                turn_target_delta = temp_turn_target_delta
+                rangeDistance = broadCandidateSectors[i][3]
+    return [turn_target_delta,rangeDistance]
+
 if __name__ == '__main__':
     delta = 3.0  #delta for angles while turning
     angle_current = float (sys.argv[-3])
@@ -79,28 +116,53 @@ if __name__ == '__main__':
 
     selectedIndex = 0
     turn_target_delta = 360
-    if relative_target_angle >= broadCandidateSectors[0][0] and relative_target_angle <= broadCandidateSectors[0][1]:
-        turn_target_delta = 0
-    elif relative_target_angle < broadCandidateSectors[0][0]:
-        turn_target_delta = broadCandidateSectors[0][0]
-    elif relative_target_angle > broadCandidateSectors[0][1]:
-        temp_turn_target_delta = broadCandidateSectors[0][1] - 360
-        if math.fabs(temp_turn_target_delta) < math.fabs(turn_target_delta):
-            turn_target_delta = temp_turn_target_delta
+    twoValues = getTempTurnTargetDeltaAndRangeDistance(broadCandidateSectors, selectedIndex,relative_target_angle,turn_target_delta)
+    turn_target_delta = twoValues[0]
+    rangeDistance = twoValues[1]
+    # if broadCandidateSectors[0][0] < broadCandidateSectors[0][1]:
+    #     if relative_target_angle >= broadCandidateSectors[0][0] and relative_target_angle <= broadCandidateSectors[0][1]:
+    #         turn_target_delta = 0.0
+    #         rangeDistance = 3.5
+    #     elif relative_target_angle < broadCandidateSectors[0][0]:
+    #         turn_target_delta = broadCandidateSectors[0][0]
+    #         rangeDistance = broadCandidateSectors[0][2]
+    #     elif relative_target_angle > broadCandidateSectors[0][1]:
+    #         temp_turn_target_delta = broadCandidateSectors[0][1] - 360
+    #         if math.fabs(temp_turn_target_delta) < math.fabs(turn_target_delta):
+    #             turn_target_delta = temp_turn_target_delta
+    #             rangeDistance = broadCandidateSectors[0][3]
+    # if broadCandidateSectors[0][0] > broadCandidateSectors[0][1]:
+    #     if relative_target_angle <= broadCandidateSectors[0][1] or relative_target_angle >= broadCandidateSectors[0][0]:
+    #         turn_target_delta = 0.0
+    #         rangeDistance = 3.5
+    #     elif relative_target_angle <= broadCandidateSectors[0][0] :
+    #         if broadCandidateSectors[0][0] > 270:
+    #             turn_target_delta = broadCandidateSectors[0][0] - 360
+    #             rangeDistance = broadCandidateSectors[0][2]
+    #         else:
+    #             turn_target_delta = broadCandidateSectors[0][0]
+    #             rangeDistance = broadCandidateSectors[0][2]
+    #     elif relative_target_angle > broadCandidateSectors[0][1]:
+    #         if broadCandidateSectors[0][1] > 270:
+    #             temp_turn_target_delta = broadCandidateSectors[0][1] - 360
+    #         else:
+    #             temp_turn_target_delta = broadCandidateSectors[0][1]
+    #         if math.fabs(temp_turn_target_delta) < math.fabs(turn_target_delta):
+    #             turn_target_delta = temp_turn_target_delta
+    #             rangeDistance = broadCandidateSectors[0][3]
 
     for i in range(0,len(broadCandidateSectors)-1):
-        if relative_target_angle >= broadCandidateSectors[i][0] and relative_target_angle <= broadCandidateSectors[i][1]:
-            temp_turn_target_delta = 0
-        elif relative_target_angle < broadCandidateSectors[i][0]:
-            temp_turn_target_delta = broadCandidateSectors[i][0]
-        elif relative_target_angle > broadCandidateSectors[i][1]:
-            temp_turn_target_delta = broadCandidateSectors[i][1] - 360
-
+############################################################
+        twoValues2 = getTempTurnTargetDeltaAndRangeDistance(broadCandidateSectors,i,relative_target_angle,turn_target_delta)
+        temp_turn_target_delta = twoValues2[0]
+        rangeDistance2 = twoValues2[1]
+##########################################################
         if math.fabs(temp_turn_target_delta) < math.fabs(turn_target_delta):
             turn_target_delta = temp_turn_target_delta
             selectedIndex = i
+            rangeDistance = rangeDistance2
 
-    if turn_target_delta == 0:
+    if math.fabs(turn_target_delta) <= 0.00000000001:
         print(angle_target)
     else:
         print((angle_current+turn_target_delta))
