@@ -334,8 +334,8 @@ function turn90() {
 #targetY="0"
 #cubes cilinders end
 
-targetX="9"
-targetY="0"
+targetX="7"
+targetY="5"
 
 set_k_b $targetX $targetY
 echo "k="$k
@@ -501,10 +501,12 @@ function archMotion2() {
     echo "numberOfCandidateSectors="$numberOfCandidateSectors
 
     while [ $i -lt $numberOfCandidateSectors ]; do
-      start=$((1+$i*2))
-      end=$(($i*2+2))
-      i=$(($i+1))
-	    echo "angleSector"$i"=["${close[$start]}","${close[$end]}"]"
+      start=$((1+$i))
+      end=$(($i+2))
+      obstacleStart=$(($i+3))
+      obstacleEnd=$(($i+4))
+      i=$(($i+4))
+	    echo "angleSector"$i"=["${close[$start]}","${close[$end]}"] in distances=["${close[$obstacleStart]}","${close[$obstacleEnd]}"]"
     done
 
     echo "turn_target="${close[$(($end+1))]}
