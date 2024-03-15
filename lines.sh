@@ -334,8 +334,8 @@ function turn90() {
 #targetY="0"
 #cubes cilinders end
 
-targetX="7"
-targetY="0"
+targetX="8"
+targetY="-1"
 
 set_k_b $targetX $targetY
 echo "k="$k
@@ -510,6 +510,7 @@ function archMotion2() {
     done
 
     echo "turn_target="${close[$(($obstacleEnd+1))]}
+    echo "directon of sector="${close[$(($obstacleEnd+2))]}
     #target angle currenctly = 90
     #roundToTargetAngle -90
 
