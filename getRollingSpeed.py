@@ -21,4 +21,10 @@ if __name__ == '__main__':
     if angle1<=90 and angle1>=0 and angle2>=-90 and angle2<=0:
         rollingSpeed=0.03
 
+    if angle1>=-190 and angle1<=-90 and angle2<=190 and angle2>=90:
+        rollingSpeed=0.03
+
+    if angle2>=-190 and angle2<=-90 and angle1<=190 and angle1>=90:
+        rollingSpeed=-0.03
+
     print("'{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z:",rollingSpeed,"}}'")

@@ -101,7 +101,7 @@ if __name__ == '__main__':
         if startedCandidateSector:
             end = angle
             candidateSectors.append([start,end,startObstacleDistance,3.5])
-        if candidateSectors[0][0] == 0 and candidateSectors[len(candidateSectors)-1][1] == 360 :
+        if candidateSectors[0][0] == 0 and candidateSectors[len(candidateSectors)-1][1] == 360 and len(candidateSectors)>1:
             candidateSectors[0][0] = candidateSectors[len(candidateSectors)-1][0] #
             candidateSectors[0][1] = candidateSectors[0][1] #
 
