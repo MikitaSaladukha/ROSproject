@@ -334,8 +334,9 @@ function turn90() {
 #targetY="0"
 #cubes cilinders end
 
-targetX="-12"
-targetY="-1"
+targetX="11"
+targetY="1" # положительные у слева, отрицательные справа
+
 
 set_k_b $targetX $targetY
 echo "k="$k
@@ -511,8 +512,9 @@ function archMotion2() {
 
     echo "turn_target="${close[$(($obstacleEnd+1))]}
     echo "directon of sector="${close[$(($obstacleEnd+2))]}
+    echo "turn target delta="${close[$(($obstacleEnd+3))]}
     #target angle currenctly = 90
-    #roundToTargetAngle -90
+    roundToTargetAngle ${close[$(($obstacleEnd+1))]}
 
 
     time=($(python3 getTime.py))
