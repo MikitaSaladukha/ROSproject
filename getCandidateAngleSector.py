@@ -154,9 +154,11 @@ if __name__ == '__main__':
                     broadCandidateSectors.append([candidate[0], candidate[1], candidate[2], candidate[3]])
         if len(broadCandidateSectors) == 0:
             broadCandidateSectors = broadCandidateSectorsPrevious
+            RForCandidate = RForCandidate - 0.2
             break
         RForCandidate = RForCandidate + 0.2
-        if RForCandidate >= 3.75:
+        if RForCandidate >= 3.6:
+            RForCandidate = RForCandidate - 0.2
             break
 
 
@@ -217,3 +219,4 @@ if __name__ == '__main__':
 
     print(directionOfSector)
     print(turn_target_delta)
+    print(RForCandidate)
