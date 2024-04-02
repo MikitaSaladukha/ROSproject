@@ -206,10 +206,13 @@ if __name__ == '__main__':
     if math.fabs(turn_target_delta - relative_target_angle) <= 0.00000000001:
         target = angle_target ## проверить сравнить углы
     else:
-        if angle_current < angle_target:
-            target = angle_current - turn_target_delta-directionOfSector*7  # проверить сравнить углы
+        if angle_target > 0:
+            if math.fabs(angle_current) < math.fabs(angle_target):
+                target = angle_current - turn_target_delta-directionOfSector*7  # проверить сравнить углы
+            else:
+                target = angle_current - turn_target_delta+directionOfSector*7  # проверить сравнить углы
         else:
-            target = angle_current - turn_target_delta-directionOfSector*7  # проверить сравнить углы
+            target = angle_current - turn_target_delta - directionOfSector * 7
 
     # if target > 270:
     #     target = 360 - target

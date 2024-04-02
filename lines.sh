@@ -335,7 +335,7 @@ function turn90() {
 #cubes cilinders end
 
 targetX="11"
-targetY="1" # положительные у слева, отрицательные справа
+targetY="-1" # положительные у слева, отрицательные справа
 
 
 set_k_b $targetX $targetY
