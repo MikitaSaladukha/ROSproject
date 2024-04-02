@@ -20,7 +20,7 @@ function turnToTarget() {
   eval $mycommand
 }
 
-good="false"
+#good="false"
 function roundToTarget() {
   x_target=$1
   y_target=$2
@@ -334,8 +334,8 @@ function turn90() {
 #targetY="0"
 #cubes cilinders end
 
-targetX="11"
-targetY="-1" # положительные у слева, отрицательные справа
+targetX="9"
+targetY="1" # положительные у слева, отрицательные справа
 
 
 set_k_b $targetX $targetY
@@ -492,10 +492,7 @@ function archMotion2() {
     echo "Start time="$time1
     echo "start round to target"
     roundToTarget $targetX $targetY
-#    while [ "false" = "$good" ]
-#    do
-#      sleep 6
-#    done
+
     echo "end round to target"
     i=$(ros2 topic echo --once /odom)
     angle=($(python3 getAngleToTarget.py $i $x_target $y_target))
@@ -506,8 +503,7 @@ function archMotion2() {
     i=$(ros2 topic echo --once /scan -f)
     close=($(python3 getCandidateAngleSector.py $i $angle_current $angel_target $closeDistance2))
     numberOfCandidateSectors=${close[0]}
-    #angle=${close[-2]}
-    #echo "numberOfCandidateSectors="${close[-3]}
+
     i=0
     echo "numberOfCandidateSectors="$numberOfCandidateSectors
 
@@ -535,7 +531,7 @@ function archMotion2() {
 #      sleep 6
 #    done
     echo "end turning by vfh*"
-#
+
 #    i=$(ros2 topic echo --once /odom)
 #    XYcurrentPrevious=($(python3 getCurrXY.py $i))
 #    XcurrPrevious=${XYcurrent[0]};

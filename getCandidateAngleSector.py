@@ -13,7 +13,7 @@ def getTempTurnTargetDeltaAndRangeDistance(broadCandidateSectors,i,relative_targ
     lowerAngleBoundary = min(broadCandidateSectors[i][0],broadCandidateSectors[i][1])
     upperAngleBoundary = max(broadCandidateSectors[i][0], broadCandidateSectors[i][1])
     # сделать запас в 5 градусов - чтобы робот не столкнулся краем с препрястввия - возможно, в конце этого всего кода
-    angle_zapas_for_robot = 4
+    angle_zapas_for_robot = 5
     if not (i == 0 and inverse_obsltacle):
         if lowerAngleBoundary == broadCandidateSectors[i][0]:
             lowerAngleBoundaryRange = broadCandidateSectors[i][2]
@@ -89,6 +89,7 @@ if __name__ == '__main__':
     # пока массив broadCandidateSectors не станет пустым.
     # В последнем случае выбрать значение broadCandidateSectors из предыдущей итерации цикла
 
+    # проверить, чтобы relative_target_angle вычислялся корректно
     # для положительных углов:
     if math.fabs(angle_current) < math.fabs(angle_target):
         relative_target_angle =  round(-angle_target + angle_current) # !инверсия т.к. угол к цели отсчитывается против часовой стрелки, а углы вокруг робота - по часовой
@@ -206,13 +207,14 @@ if __name__ == '__main__':
     if math.fabs(turn_target_delta - relative_target_angle) <= 0.00000000001:
         target = angle_target ## проверить сравнить углы
     else:
-        if angle_target > 0:
-            if math.fabs(angle_current) < math.fabs(angle_target):
-                target = angle_current - turn_target_delta-directionOfSector*7  # проверить сравнить углы
-            else:
-                target = angle_current - turn_target_delta+directionOfSector*7  # проверить сравнить углы
+        # проверить, чтобы target вычислялся корректно
+        if turn_target_delta > 0:
+            # if math.fabs(angle_current) < math.fabs(angle_target):
+            #     target = angle_current - turn_target_delta-7  # проверить сравнить углы
+            # else:
+                target = angle_current - turn_target_delta-7  # проверить сравнить углы
         else:
-            target = angle_current - turn_target_delta - directionOfSector * 7
+            target = angle_current - turn_target_delta + 7
 
     # if target > 270:
     #     target = 360 - target

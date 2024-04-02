@@ -7,5 +7,5 @@ if __name__ == '__main__':
     y1=float(sys.argv[2])
     x2=float(sys.argv[3])
     y2=float(sys.argv[4])
-    d=math.sqrt((x1-x2)*(x1-x2)-(y1-y2)*(y1-y2))
+    d=math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))
     print(d)
