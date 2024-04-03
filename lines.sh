@@ -520,17 +520,26 @@ function archMotion2() {
     echo "directon of sector="${close[$(($obstacleEnd+2))]}
     echo "turn target delta="${close[$(($obstacleEnd+3))]}
     echo "openFreeDistance="${close[$(($obstacleEnd+4))]}
+    echo "relative target angle="${close[$(($obstacleEnd+5))]}
+    echo "relative target angle with minus="${close[$(($obstacleEnd+6))]}
+
+
+    echo "minus_relative_target_angle360="${close[$(($obstacleEnd+7))]}
+    echo "check_with_360_relative_target_angle2="${close[$(($obstacleEnd+8))]}
+#    echo "3="${close[$(($obstacleEnd+9))]}
+#    echo "4="${close[$(($obstacleEnd+10))]}
+#
+#    echo "5="${close[$(($obstacleEnd+11))]}
+#    echo "6="${close[$(($obstacleEnd+12))]}
+
+
+
     openFreeDistance=${close[$(($obstacleEnd+4))]}
     turnAngle=${close[$(($obstacleEnd+1))]}
     #target angle currenctly = 90
-    echo "start turning by vfh*"
-    roundToTargetAngle $turnAngle
-
-#    while [ "false" = "$good" ]
-#    do
-#      sleep 6
-#    done
-    echo "end turning by vfh*"
+#    echo "start turning by vfh*"
+#    roundToTargetAngle $turnAngle
+#    echo "end turning by vfh*"
 
 #    i=$(ros2 topic echo --once /odom)
 #    XYcurrentPrevious=($(python3 getCurrXY.py $i))
