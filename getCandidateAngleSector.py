@@ -85,71 +85,6 @@ def getTempTurnTargetDeltaAndRangeDistance(broadCandidateSectors,i,relative_targ
                 # temp_turn_target_delta = upperAngleBoundary - 360
                 directionOfSector = 1
             return [temp_turn_target_delta, rangeDistance, directionOfSector]
-    # else: #relative_target_angle<0
-    #     if not (i == 0 and inverse_obsltacle):
-    #         if lowerAngleBoundary == broadCandidateSectors[i][0]:
-    #             lowerAngleBoundaryRange = broadCandidateSectors[i][2]
-    #             upperAngleBoundaryRange = broadCandidateSectors[i][3]
-    #         else:  ##  lowerAngleBoundary == broadCandidateSectors[i][1]:
-    #             lowerAngleBoundaryRange = broadCandidateSectors[i][3]
-    #             upperAngleBoundaryRange = broadCandidateSectors[i][2]
-    #
-    #         if relative_target_angle >= lowerAngleBoundary + angle_zapas_for_robot and relative_target_angle <= upperAngleBoundary - angle_zapas_for_robot:
-    #             temp_turn_target_delta = relative_target_angle  # relative_target_angle значит, что чтобы двигаться к цели, движемся прямо к цели, не изменяя прямую линию до цели
-    #             rangeDistance = RForCandidate
-    #             directionOfSector = 0
-    #         elif relative_target_angle < lowerAngleBoundary + angle_zapas_for_robot:
-    #             if lowerAngleBoundary > 270:
-    #                 temp_turn_target_delta = lowerAngleBoundary - 360
-    #                 directionOfSector = -1
-    #             else:
-    #                 temp_turn_target_delta = lowerAngleBoundary
-    #                 directionOfSector = 1
-    #             rangeDistance = lowerAngleBoundaryRange
-    #             directionOfSector = 1
-    #         elif relative_target_angle > upperAngleBoundary - angle_zapas_for_robot:
-    #             if upperAngleBoundary > 270:
-    #                 temp_turn_target_delta = upperAngleBoundary - 360
-    #                 directionOfSector = -1
-    #             else:
-    #                 temp_turn_target_delta = upperAngleBoundary
-    #                 directionOfSector = 1
-    #             rangeDistance = upperAngleBoundaryRange
-    #             directionOfSector = -1
-    #         return [temp_turn_target_delta, rangeDistance, directionOfSector]
-    #     else:
-    #         if lowerAngleBoundary == broadCandidateSectors[i][0]:
-    #             lowerAngleBoundaryRange = broadCandidateSectors[i][2]
-    #             upperAngleBoundaryRange = broadCandidateSectors[i][3]
-    #         else:  ##  lowerAngleBoundary == broadCandidateSectors[i][1]:
-    #             lowerAngleBoundaryRange = broadCandidateSectors[i][3]
-    #             upperAngleBoundaryRange = broadCandidateSectors[i][2]
-    #         if relative_target_angle <= lowerAngleBoundary - angle_zapas_for_robot or relative_target_angle >= upperAngleBoundary + angle_zapas_for_robot:
-    #             temp_turn_target_delta = relative_target_angle  # relative_target_angle значит, что чтобы двигаться к цели, движемся прямо к цели, не изменяя прямую линию до цели
-    #             rangeDistance = RForCandidate
-    #             directionOfSector = 0
-    #         elif relative_target_angle > lowerAngleBoundary - angle_zapas_for_robot:
-    #             if lowerAngleBoundary > 270:
-    #                 temp_turn_target_delta = lowerAngleBoundary - 360
-    #                 directionOfSector = -1
-    #             else:
-    #                 temp_turn_target_delta = lowerAngleBoundary
-    #                 directionOfSector = 1
-    #
-    #             # temp_turn_target_delta = lowerAngleBoundary
-    #             directionOfSector = -1
-    #             rangeDistance = lowerAngleBoundaryRange
-    #         elif relative_target_angle < upperAngleBoundary + angle_zapas_for_robot:
-    #             if upperAngleBoundary > 270:
-    #                 temp_turn_target_delta = upperAngleBoundary - 360
-    #                 directionOfSector = -1
-    #             else:
-    #                 temp_turn_target_delta = upperAngleBoundary
-    #                 directionOfSector = 1
-    #             rangeDistance = upperAngleBoundaryRange
-    #             # temp_turn_target_delta = upperAngleBoundary - 360
-    #             directionOfSector = 1
-    #         return [temp_turn_target_delta, rangeDistance, directionOfSector]
 
 if __name__ == '__main__':
     delta = 3.0  #delta for angles while turning
@@ -164,46 +99,20 @@ if __name__ == '__main__':
     # проверить, чтобы relative_target_angle вычислялся корректно
     # для положительных углов:
     relative_target_angle = round (angle_target- angle_current)
-    # if math.fabs(angle_current) < math.fabs(angle_target):
-    #     relative_target_angle =  round (angle_current - angle_target)# инверсии нет! !инверсия т.к. угол к цели отсчитывается против часовой стрелки, а углы вокруг робота - по часовой
-    # else:
-    #     relative_target_angle = - round (angle_current - angle_target)
-
- # ниже точно не надо
-    # if angle_current > 0:
-    #     if angle_target > 0:
-    #         if angle_target > angle_current:
-    #             relative_target_angle = round (angle_current - angle_target) # good
-    #         else:
-    #             relative_target_angle = round (angle_current - angle_target)
-    #     else:
-    #         if angle_target > angle_current:
-    #             relative_target_angle = round (angle_current - angle_target)
-    #         else:
-    #             relative_target_angle = - round (angle_current - angle_target)
-    # else:
-    #     if angle_target > 0:
-    #         if angle_target > angle_current:
-    #             relative_target_angle = round(angle_current - angle_target)
-    #         else:
-    #             relative_target_angle = - round(angle_current - angle_target)
-    #     else:
-    #         if angle_target > angle_current:
-    #             relative_target_angle = round(angle_current - angle_target)
-    #         else:
-    #             relative_target_angle = - round(angle_current - angle_target)
-
-
-
     broadCandidateSectors = []
     if relative_target_angle < 0: relative_target_angle = relative_target_angle + 360
     if relative_target_angle > 360: relative_target_angle = relative_target_angle - 360
-    check_with_minus_relative_target_angle = relative_target_angle
-    if relative_target_angle > 270: check_with_minus_relative_target_angle = relative_target_angle - 360
+    #check_with_minus_relative_target_angle = relative_target_angle
+    ##if relative_target_angle > 270:
+    check_with_minus_relative_target_angle = relative_target_angle - 360 # было >270
 
-    check_with_360_relative_target_angle2 = relative_target_angle
-    if relative_target_angle < 90 : check_with_360_relative_target_angle2 = 360 - relative_target_angle
-    minus_relative_target_angle = relative_target_angle-360
+    # inversed_target_angle = False
+    # check_with_360_relative_target_angle2 = relative_target_angle
+    # minus_relative_target_angle360 = relative_target_angle
+    # if relative_target_angle < 90 :
+    check_with_360_relative_target_angle2 = 360 + relative_target_angle # было <90
+    inversed_target_angle = True
+    minus_relative_target_angle360 = 360 + relative_target_angle# relative_target_angle-360
 
     # if relative_target_angle > 360: relative_target_angle = relative_target_angle - 360
     while True: #отсчет углов идет против часовой стрелки
@@ -293,22 +202,19 @@ if __name__ == '__main__':
         rangeDistance = rangeDistance2
         directionOfSector = temp_directionOfSector
 
-
+###????????????????????????????????
     twoValues2 = getTempTurnTargetDeltaAndRangeDistance(broadCandidateSectors, selectedIndex,check_with_360_relative_target_angle2)
     temp_turn_target_delta = twoValues2[0]
     rangeDistance2 = twoValues2[1]
     temp_directionOfSector = twoValues2[2]
+    ##temp_turn_target_delta360 = temp_turn_target_delta + 360
     # print("direction_of_sector!=",temp_directionOfSector)
-    if math.fabs(temp_turn_target_delta - minus_relative_target_angle) <= math.fabs(turn_target_delta - minus_relative_target_angle):
+    if math.fabs(temp_turn_target_delta+360 - minus_relative_target_angle360) <= math.fabs(turn_target_delta+360 - minus_relative_target_angle360):
         turn_target_delta = temp_turn_target_delta
         rangeDistance = rangeDistance2
         directionOfSector = temp_directionOfSector
-    # if relative_target_angle > 270:
-    #     relative_target_angle = relative_target_angle - 360
 
-
-
-    for i in range(0,len(broadCandidateSectors)-1):
+    for i in range(1,len(broadCandidateSectors)):
 
         twoValues2 = getTempTurnTargetDeltaAndRangeDistance(broadCandidateSectors,i,check_with_minus_relative_target_angle)
         temp_turn_target_delta = twoValues2[0]
@@ -320,16 +226,15 @@ if __name__ == '__main__':
             rangeDistance = rangeDistance2
             directionOfSector = temp_directionOfSector
 
+##############????????????????????????????
         twoValues2 = getTempTurnTargetDeltaAndRangeDistance(broadCandidateSectors, i,check_with_360_relative_target_angle2)
         temp_turn_target_delta = twoValues2[0]
         rangeDistance2 = twoValues2[1]
         temp_directionOfSector = twoValues2[2]
-        # print("direction_of_sector!=",temp_directionOfSector)
-        if math.fabs(temp_turn_target_delta - minus_relative_target_angle) <= math.fabs(turn_target_delta - minus_relative_target_angle):
+        if math.fabs(temp_turn_target_delta + 360 - minus_relative_target_angle360) <= math.fabs(turn_target_delta + 360 - minus_relative_target_angle360):
             turn_target_delta = temp_turn_target_delta
             rangeDistance = rangeDistance2
             directionOfSector = temp_directionOfSector
-            selectedIndex = i
 
 
         twoValues2 = getTempTurnTargetDeltaAndRangeDistance(broadCandidateSectors,i,relative_target_angle)
@@ -342,36 +247,20 @@ if __name__ == '__main__':
             rangeDistance = rangeDistance2
             directionOfSector = temp_directionOfSector
 
-    
-    if turn_target_delta > 270: turn_target_delta = 360 - turn_target_delta # проверить сравнить углы
-    if turn_target_delta > 360: turn_target_delta = turn_target_delta - 360 # проверить сравнить углы
-
-    #relative_target_angle = round(-angle_target + angle_current)  # инверсия т.к. угол к цели отсчитывается против часовой стрелки, а углы вокруг робота - по часовой
-
-
     target=0
     if math.fabs(turn_target_delta - relative_target_angle) <= 0.00000000001:
         target = angle_target ## проверить сравнить углы
     else:
-        # проверить, чтобы target вычислялся корректно
-        if turn_target_delta > 0:
-            # if math.fabs(angle_current) < math.fabs(angle_target):
-            #     target = angle_current - turn_target_delta-7  # проверить сравнить углы
-            # else:
-                target = angle_current + turn_target_delta# + directionOfSector*7 #-7  # проверить сравнить углы
-        else:
-            target = angle_current + turn_target_delta# + directionOfSector*7# + 7
+        target = angle_current + turn_target_delta# + directionOfSector*7# + 7
 
-    # if target > 270:
-    #     target = 360 - target
-    # if target < -270:
-    #     target = 360 + target
+
     print(target)
 
+    RForCandidate = RForCandidate - 0.4
     print(directionOfSector)
     print(turn_target_delta)
     print(RForCandidate)
     print(relative_target_angle)
     print(check_with_minus_relative_target_angle)
-    print(minus_relative_target_angle)
+    print(minus_relative_target_angle360)
     print(check_with_360_relative_target_angle2)
