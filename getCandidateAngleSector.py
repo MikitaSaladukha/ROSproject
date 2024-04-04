@@ -220,7 +220,6 @@ if __name__ == '__main__':
             selectedIndex = i
             rangeDistance = rangeDistance2
             directionOfSector = temp_directionOfSector
-
 ##############????????????????????????????
         twoValues2 = getTempTurnTargetDeltaAndRangeDistance(broadCandidateSectors, i,minus_relative_target_angle360)
         temp_turn_target_delta = twoValues2[0]
@@ -230,7 +229,7 @@ if __name__ == '__main__':
             turn_target_delta = temp_turn_target_delta
             rangeDistance = rangeDistance2
             directionOfSector = temp_directionOfSector
-
+            selectedIndex = i
 
         twoValues2 = getTempTurnTargetDeltaAndRangeDistance(broadCandidateSectors,i,relative_target_angle)
         temp_turn_target_delta = twoValues2[0]
