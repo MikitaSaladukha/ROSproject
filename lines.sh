@@ -117,7 +117,7 @@ function checkOnLine() {
 
 }
 side="none"
-closeDistance="0.4"
+closeDistance="0.5"
 function moveToTargetWithStop() {
   goal="false"
   near="false"
@@ -325,8 +325,8 @@ function turn90() {
 
 
 #cabinet begin
-#targetX="7"
-#targetY="-3"
+targetX="3"
+targetY="8"
 #cabinet end
 
 #cubes cilinders begin
@@ -334,8 +334,9 @@ function turn90() {
 #targetY="0"
 #cubes cilinders end
 
-targetX="9"
-targetY="-1" # положительные у слева, отрицательные справа
+#cubes:
+#targetX="9"
+#targetY="-1" # положительные у слева, отрицательные справа
 
 
 set_k_b $targetX $targetY
@@ -484,98 +485,131 @@ function roundToTargetAngle() {
 
 
 closeDistance2="3.3"
-openFreeDistance=closeDistance
+openFreeDistance=$closeDistance
 turnAngle="0.0"
+
 function archMotion2() {
     echo "start vfh*"
     time1=($(python3 getTime.py))
     echo "Start time="$time1
-    echo "start round to target"
-    roundToTarget $targetX $targetY
+    while [ "false" = "$goal" ]; do
+#    echo "start round to target"
+#    roundToTarget $targetX $targetY
+#
+#    echo "end round to target"
+      echo "moveToTargetWithStop START"
+      moveToTargetWithStop $targetX $targetY
+      echo "moveToTargetWithStop DONE"
 
-    echo "end round to target"
-    i=$(ros2 topic echo --once /odom)
-    angle=($(python3 getAngleToTarget.py $i $x_target $y_target))
-    angel_target=${angle[-1]}
-    angle_current=${angle[-2]}
-    echo "angel_target="$angel_target
-    echo "angle_current="$angle_current
-    i=$(ros2 topic echo --once /scan -f)
-    close=($(python3 getCandidateAngleSector.py $i $angle_current $angel_target $closeDistance2))
-    numberOfCandidateSectors=${close[0]}
+      if [ "true" = "$goal" ]
+        then
+          echo "goal REACHED"
+          break
+      fi
 
-    i=0
-    echo "numberOfCandidateSectors="$numberOfCandidateSectors
+      i=$(ros2 topic echo --once /odom)
+      angle=($(python3 getAngleToTarget.py $i $targetX $targetY))
+      angel_target=${angle[-1]}
+      angle_current=${angle[-2]}
+      echo "angel_target="$angel_target
+      echo "angle_current="$angle_current
+      i=$(ros2 topic echo --once /scan -f)
+      close=($(python3 getCandidateAngleSector.py $i $angle_current $angel_target $closeDistance))
+      numberOfCandidateSectors=${close[0]}
 
-    while [ $i -lt $numberOfCandidateSectors ]; do
-      start=$((1+$i))
-      end=$(($i+2))
-      obstacleStart=$(($i+3))
-      obstacleEnd=$(($i+4))
-      i=$(($i+4))
-	    echo "angleSector"$i"=["${close[$start]}","${close[$end]}"] in distances=["${close[$obstacleStart]}","${close[$obstacleEnd]}"]"
+      i=0
+      echo "numberOfCandidateSectors="$numberOfCandidateSectors
+
+      while [ $i -lt $numberOfCandidateSectors ]; do
+        start=$((1+$i))
+        end=$(($i+2))
+        obstacleStart=$(($i+3))
+        obstacleEnd=$(($i+4))
+        i=$(($i+4))
+        echo "angleSector"$i"=["${close[$start]}","${close[$end]}"] in distances=["${close[$obstacleStart]}","${close[$obstacleEnd]}"]"
+      done
+
+      echo "turn_target="${close[$(($obstacleEnd+1))]}
+      echo "directon of sector="${close[$(($obstacleEnd+2))]}
+      echo "turn target delta="${close[$(($obstacleEnd+3))]}
+      echo "openFreeDistance="${close[$(($obstacleEnd+4))]}
+      echo "relative target angle="${close[$(($obstacleEnd+5))]}
+      echo "relative target angle with minus="${close[$(($obstacleEnd+6))]}
+
+
+      echo "minus_relative_target_angle360="${close[$(($obstacleEnd+7))]}
+  #    echo "check_with_360_relative_target_angle2="${close[$(($obstacleEnd+8))]}
+  #    echo "3="${close[$(($obstacleEnd+9))]}
+  #    echo "4="${close[$(($obstacleEnd+10))]}
+  #
+  #    echo "5="${close[$(($obstacleEnd+11))]}
+  #    echo "6="${close[$(($obstacleEnd+12))]}
+
+
+
+      openFreeDistance=${close[$(($obstacleEnd+4))]}
+      turnAngle=${close[$(($obstacleEnd+1))]}
+      #target angle currenctly = 90
+      echo "start turning by vfh*"
+      roundToTargetAngle $turnAngle
+      echo "end turning by vfh*"
+
+      i=$(ros2 topic echo --once /odom)
+      XYcurrentPrevious=($(python3 getCurrXY.py $i))
+      XcurrPrevious=${XYcurrent[0]};
+      YcurrPrevious=${XYcurrent[1]};
+
+      echo "started motion by vfh*"
+      ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.06, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+      while [ "true" = "true" ]; do
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.06, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+        i=$(ros2 topic echo --once /odom)
+        XYcurrent=($(python3 getCurrXY.py $i))
+        Xcurr=${XYcurrent[0]};
+        Ycurr=${XYcurrent[1]};
+        distanceL=($(python3 getDistance.py $XcurrPrevious $YcurrPrevious $Xcurr $Ycurr))
+
+        L1=$distanceL
+        L2=$openFreeDistance
+        diffL=($(python3 diffF1_F2.py $L1 $L2))
+        diffExtent=($(python3 diffF1_F2.py $diffL $closeExtent))
+        Lcloser=($(python3 biggerThanZero.py $diffExtent))
+        echo "distanceL="$L1
+        echo "openFreeDistance="$openFreeDistance
+        echo "diffL="$diffL
+        echo "diffExtent="$diffExtent
+        echo "Lcloser="$Lcloser
+        if [ "True" = "$Lcloser" ]
+            then
+              echo "distance moved by vfh*"
+              Lcloser="False"
+              break
+        fi
+        echo "check GOAL"
+        i=$(ros2 topic echo --once /odom)
+        XYcurrent=($(python3 getAngleToTarget.py $i $targetX $targetY))
+        Xcurr=${XYcurrent[0]};
+        Ycurr=${XYcurrent[1]};
+        delta="0.25"
+        good1=($(python3 isEqualFloat.py $delta $targetX $Xcurr))
+        good2=($(python3 isEqualFloat.py $delta $targetY $Ycurr))
+        # shellcheck disable=SC1073
+        if [ $good1 = "false" -o $good2 = "false" ]
+        then
+          goal="false"
+        else
+          echo "goal REACHED"
+          ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+          goal="true"
+          break
+        fi
+        echo "goal check DONE"
+
+      done
+
+
+      ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
     done
-
-    echo "turn_target="${close[$(($obstacleEnd+1))]}
-    echo "directon of sector="${close[$(($obstacleEnd+2))]}
-    echo "turn target delta="${close[$(($obstacleEnd+3))]}
-    echo "openFreeDistance="${close[$(($obstacleEnd+4))]}
-    echo "relative target angle="${close[$(($obstacleEnd+5))]}
-    echo "relative target angle with minus="${close[$(($obstacleEnd+6))]}
-
-
-    echo "minus_relative_target_angle360="${close[$(($obstacleEnd+7))]}
-#    echo "check_with_360_relative_target_angle2="${close[$(($obstacleEnd+8))]}
-#    echo "3="${close[$(($obstacleEnd+9))]}
-#    echo "4="${close[$(($obstacleEnd+10))]}
-#
-#    echo "5="${close[$(($obstacleEnd+11))]}
-#    echo "6="${close[$(($obstacleEnd+12))]}
-
-
-
-    openFreeDistance=${close[$(($obstacleEnd+4))]}
-    turnAngle=${close[$(($obstacleEnd+1))]}
-    #target angle currenctly = 90
-#    echo "start turning by vfh*"
-#    roundToTargetAngle $turnAngle
-#    echo "end turning by vfh*"
-
-#    i=$(ros2 topic echo --once /odom)
-#    XYcurrentPrevious=($(python3 getCurrXY.py $i))
-#    XcurrPrevious=${XYcurrent[0]};
-#    YcurrPrevious=${XYcurrent[1]};
-#
-#    echo "started motion by vfh*"
-#    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.06, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
-#    while [ "true" = "true" ]; do
-#      ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.06, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
-#      i=$(ros2 topic echo --once /odom)
-#      XYcurrent=($(python3 getCurrXY.py $i))
-#      Xcurr=${XYcurrent[0]};
-#      Ycurr=${XYcurrent[1]};
-#      distanceL=($(python3 getDistance.py $XcurrPrevious $YcurrPrevious $Xcurr $Ycurr))
-#
-#      L1=$distanceL
-#      L2=$openFreeDistance
-#      diffL=($(python3 diffF1_F2.py $L1 $L2))
-#      diffExtent=($(python3 diffF1_F2.py $diffL $closeExtent))
-#      Lcloser=($(python3 biggerThanZero.py $diffExtent))
-#      echo "distanceL="$L1
-#      echo "openFreeDistance="$openFreeDistance
-#      echo "diffL="$diffL
-#      echo "diffExtent="$diffExtent
-#      echo "Lcloser="$Lcloser
-#      if [ "True" = "$Lcloser" ]
-#          then
-#            echo "distance moved by vfh*"
-#            Lcloser="False"
-#            break
-#        fi
-#    done
-#
-#    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
-
     time=($(python3 getTime.py))
     echo "Start time="$time1" End time="$time
 }
