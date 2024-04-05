@@ -111,15 +111,18 @@ if __name__ == '__main__':
 
     # if relative_target_angle > 360: relative_target_angle = relative_target_angle - 360
     while True: #отсчет углов идет против часовой стрелки
+        previous_inverse_obsltacle = inverse_obsltacle
+        broadCandidateSectorsPrevious = broadCandidateSectors
+        inverse_obsltacle = False
         startingI=25
         Start=sys.argv[startingI]
         angle=0
         startedCandidateSector=False
         candidateSectors=[]
         for i in range(startingI, 720+startingI, 2):
-            if angle>90 and angle<270:
-                angle = angle + 1
-                continue
+            # if angle>90 and angle<270:
+            #     angle = angle + 1
+            #     continue
             if sys.argv[i]=='.inf' or float(sys.argv[i]) >= RForCandidate:
                if not startedCandidateSector:
                    startedCandidateSector = True
@@ -154,17 +157,18 @@ if __name__ == '__main__':
             inverse_obsltacle = True
             candidateSectors.pop()
 
-        broadCandidateSectorsPrevious = broadCandidateSectors
+
+
         broadCandidateSectors = []
         for candidate in candidateSectors:
-            if candidate[1] > candidate[0]:
-                if (candidate[1]-candidate[0] >= 180 or 2*RForCandidate*RForCandidate*(1-math.cos(math.radians(math.fabs(candidate[1]-candidate[0])))) >= 0.3): ## 0.3 - широта робота
-                    broadCandidateSectors.append([candidate[0],candidate[1],candidate[2],candidate[3]])
-            if candidate[1] < candidate[0]:
-                if (candidate[1] - candidate[0] >= -180 or 2 * RForCandidate * RForCandidate * (1 - math.cos(math.radians(math.fabs(candidate[1] - candidate[0])))) >= 0.3):
-                    broadCandidateSectors.append([candidate[0], candidate[1], candidate[2], candidate[3]])
+
+            if ((math.fabs(candidate[1] - candidate[0]) >= 180) or
+                ((2 * RForCandidate * RForCandidate * (1 - math.cos(math.radians(math.fabs(candidate[1] - candidate[0]))))) >= 0.6)): ## 0.3 - широта робота, но мы делаем с запасом, 0.6
+                broadCandidateSectors.append([candidate[0],candidate[1],candidate[2],candidate[3]])
+
         if len(broadCandidateSectors) == 0:
             broadCandidateSectors = broadCandidateSectorsPrevious
+            inverse_obsltacle = previous_inverse_obsltacle
             RForCandidate = RForCandidate - 0.2
             break
         RForCandidate = RForCandidate + 0.2
@@ -257,4 +261,6 @@ if __name__ == '__main__':
     print(relative_target_angle)
     print(check_with_minus_relative_target_angle)
     print(minus_relative_target_angle360)
+    print(2 * RForCandidate * RForCandidate * (1 - math.cos(math.radians(math.fabs(broadCandidateSectors[0][1] - broadCandidateSectors[0][0])))))
+    print(inverse_obsltacle)
     #print(check_with_360_relative_target_angle2)

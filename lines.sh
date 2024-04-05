@@ -538,8 +538,9 @@ function archMotion2() {
 
 
       echo "minus_relative_target_angle360="${close[$(($obstacleEnd+7))]}
-  #    echo "check_with_360_relative_target_angle2="${close[$(($obstacleEnd+8))]}
-  #    echo "3="${close[$(($obstacleEnd+9))]}
+
+      echo "broadth="${close[$(($obstacleEnd+8))]}
+      echo "inverse obstacle="${close[$(($obstacleEnd+9))]}
   #    echo "4="${close[$(($obstacleEnd+10))]}
   #
   #    echo "5="${close[$(($obstacleEnd+11))]}
