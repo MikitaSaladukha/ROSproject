@@ -90,6 +90,7 @@ def getTempTurnTargetDeltaAndRangeDistance(broadCandidateSectors,i,relative_targ
 if __name__ == '__main__':
     delta = 3.0  #delta for angles while turning
     inverse_obsltacle = False
+    broadth=0.0
     angle_current = float (sys.argv[-3])
     angle_target = float(sys.argv[-2])
     RForCandidate = float(sys.argv[-1]) ## дальность до препятствия, или на какой дальности производится оценка возможных свободных секторов
@@ -161,9 +162,9 @@ if __name__ == '__main__':
 
         broadCandidateSectors = []
         for candidate in candidateSectors:
-
+            broadth = 2 * RForCandidate * RForCandidate * (1 - math.cos(math.radians(math.fabs(candidate[1] - candidate[0]))))
             if ((math.fabs(candidate[1] - candidate[0]) >= 180) or
-                ((2 * RForCandidate * RForCandidate * (1 - math.cos(math.radians(math.fabs(candidate[1] - candidate[0]))))) >= 0.6)): ## 0.3 - широта робота, но мы делаем с запасом, 0.6
+                (broadth>= 0.6)): ## 0.3 - широта робота, но мы делаем с запасом, 0.6
                 broadCandidateSectors.append([candidate[0],candidate[1],candidate[2],candidate[3]])
 
         if len(broadCandidateSectors) == 0:
@@ -261,6 +262,6 @@ if __name__ == '__main__':
     print(relative_target_angle)
     print(check_with_minus_relative_target_angle)
     print(minus_relative_target_angle360)
-    print(2 * RForCandidate * RForCandidate * (1 - math.cos(math.radians(math.fabs(broadCandidateSectors[0][1] - broadCandidateSectors[0][0])))))
+    print(broadth)
     print(inverse_obsltacle)
     #print(check_with_360_relative_target_angle2)
