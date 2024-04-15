@@ -1,5 +1,19 @@
 #!/bin/bash
 source /opt/ros/humble/setup.bash
+#cabinet begin
+#targetX="4"
+#targetY="-2"
+#cabinet end
+
+#cubes cilinders begin
+targetX="9"
+targetY="0"
+#cubes cilinders end
+
+#cubes:
+#targetX="9"
+#targetY="-1" # положительные у слева, отрицательные справа
+
 function turnToTarget() {
   source /opt/ros/humble/setup.bash
   xTarget=$1
@@ -324,19 +338,7 @@ function turn90() {
 }
 
 
-#cabinet begin
-#targetX="4"
-#targetY="-2"
-#cabinet end
 
-#cubes cilinders begin
-targetX="9"
-targetY="0"
-#cubes cilinders end
-
-#cubes:
-#targetX="9"
-#targetY="-1" # положительные у слева, отрицательные справа
 
 
 set_k_b $targetX $targetY
