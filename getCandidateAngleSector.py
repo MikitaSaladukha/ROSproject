@@ -59,6 +59,7 @@ def getTempTurnTargetDeltaAndRangeDistance(broadCandidateSectors,i,relative_targ
         else: ##  lowerAngleBoundary == broadCandidateSectors[i][1]:
             lowerAngleBoundaryRange = broadCandidateSectors[i][3]
             upperAngleBoundaryRange = broadCandidateSectors[i][2]
+        if relative_target_angle >= 360: relative_target_angle = relative_target_angle - 360
         if relative_target_angle <= lowerAngleBoundary-angle_zapas_for_robot or relative_target_angle >= upperAngleBoundary+angle_zapas_for_robot:
             temp_turn_target_delta = relative_target_angle  # relative_target_angle значит, что чтобы двигаться к цели, движемся прямо к цели, не изменяя прямую линию до цели
             rangeDistance = RForCandidate
@@ -162,10 +163,10 @@ if __name__ == '__main__':
 
         broadCandidateSectors = []
         for candidate in candidateSectors:
-            broadth = 2 * RForCandidate * RForCandidate * (1 - math.cos(math.radians(math.fabs(candidate[1] - candidate[0]))))
-            if ((math.fabs(candidate[1] - candidate[0]) >= 180) or
-                (broadth>= 0.6)): ## 0.3 - широта робота, но мы делаем с запасом, 0.6
-                broadCandidateSectors.append([candidate[0],candidate[1],candidate[2],candidate[3]])
+            # broadth = 2 * RForCandidate * RForCandidate * (1 - math.cos(math.radians(math.fabs(candidate[1] - candidate[0]))))
+            # if ((math.fabs(candidate[1] - candidate[0]) >= 180) or
+            #     (broadth>= 0.6)): ## 0.3 - широта робота, но мы делаем с запасом, 0.6
+            broadCandidateSectors.append([candidate[0],candidate[1],candidate[2],candidate[3]])
 
         if len(broadCandidateSectors) == 0:
             broadCandidateSectors = broadCandidateSectorsPrevious
@@ -203,16 +204,18 @@ if __name__ == '__main__':
         directionOfSector = temp_directionOfSector
 
 ###????????????????????????????????
-    twoValues2 = getTempTurnTargetDeltaAndRangeDistance(broadCandidateSectors, selectedIndex,minus_relative_target_angle360)
-    temp_turn_target_delta = twoValues2[0]
-    rangeDistance2 = twoValues2[1]
-    temp_directionOfSector = twoValues2[2]
+    if (not inverse_obsltacle) :
+        twoValues2 = getTempTurnTargetDeltaAndRangeDistance(broadCandidateSectors, selectedIndex,minus_relative_target_angle360)
+        temp_turn_target_delta = twoValues2[0]
+        rangeDistance2 = twoValues2[1]
+        temp_directionOfSector = twoValues2[2]
     ##temp_turn_target_delta360 = temp_turn_target_delta + 360
     # print("direction_of_sector!=",temp_directionOfSector)
-    if math.fabs(temp_turn_target_delta+360 - minus_relative_target_angle360) <= math.fabs(turn_target_delta+360 - minus_relative_target_angle360):
-        turn_target_delta = temp_turn_target_delta
-        rangeDistance = rangeDistance2
-        directionOfSector = temp_directionOfSector
+        if math.fabs(temp_turn_target_delta+360 - minus_relative_target_angle360) <= math.fabs(turn_target_delta+360 - minus_relative_target_angle360):
+            turn_target_delta = temp_turn_target_delta
+            rangeDistance = rangeDistance2
+            directionOfSector = temp_directionOfSector
+
 
     for i in range(1,len(broadCandidateSectors)):
 
