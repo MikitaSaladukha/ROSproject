@@ -131,8 +131,9 @@ function checkOnLine() {
 
 }
 side="none"
-closeDistance="0.5"
+closeDistance="0.9"
 function moveToTargetWithStop() {
+  side="none"
   goal="false"
   near="false"
   x_target=$1
@@ -485,6 +486,43 @@ function roundToTargetAngle() {
   ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
 }
 
+function movingFront2() {
+  moving="moving"
+  ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.06, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+  #sleep 2
+  while [ "moving" = "$moving" ]; do
+    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.03, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+
+    echo "check GOAL"
+    i=$(ros2 topic echo --once /odom)
+    XYcurrent=($(python3 getAngleToTarget.py $i $targetX $targetY))
+    Xcurr=${XYcurrent[0]};
+    Ycurr=${XYcurrent[1]};
+    delta="0.25"
+    good1=($(python3 isEqualFloat.py $delta $targetX $Xcurr))
+    good2=($(python3 isEqualFloat.py $delta $targetY $Ycurr))
+    # shellcheck disable=SC1073
+    if [ $good1 = "false" -o $good2 = "false" ]
+    then
+      goal="false"
+    else
+      echo "goal REACHED"
+      ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+      goal="true"
+      break
+    fi
+    echo "goal check DONE"
+
+
+
+    i=$(ros2 topic echo --once /scan -f)
+    moving=($(python3 movingFront.py $i $side "0.27" "0.37"))
+
+    echo "moving="$moving
+  done
+  ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+}
+
 
 closeDistance2="3.3"
 openFreeDistance=$closeDistance
@@ -629,9 +667,73 @@ function archMotion2() {
 
 
 
-#function bugMotionArch() {
-#
-#}
+function bugMotionArch() {
+        if [ "true" = "$goal" ]
+          then
+            echo "goal REACHED"
+            return
+        fi
+        set_distanceL $targetX $targetY
+        L1=$distanceL
+        echo "L1="$L1
+        echo "rollingForOrtogonal START"
+        rollingForOrtogonal $side
+        echo "rollingForOrtogonal DONE"
+        echo "L1="$L1
+        while [ "$Lcloser" = "False" ]; do
+            echo "movingFront2 START"
+            movingFront2
+            echo "movingFront2 DONE"
+        ###########################################
+            echo "check GOAL"
+            i=$(ros2 topic echo --once /odom)
+            XYcurrent=($(python3 getAngleToTarget.py $i $targetX $targetY))
+            Xcurr=${XYcurrent[0]};
+            Ycurr=${XYcurrent[1]};
+            delta="0.25"
+            good1=($(python3 isEqualFloat.py $delta $targetX $Xcurr))
+            good2=($(python3 isEqualFloat.py $delta $targetY $Ycurr))
+            # shellcheck disable=SC1073
+            if [ $good1 = "false" -o $good2 = "false" ]
+            then
+              goal="false"
+            else
+              echo "goal REACHED"
+              ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+              goal="true"
+              break
+            fi
+            echo "goal check DONE"
+          ##########################################
+            set_distanceL $targetX $targetY
+            L2=$distanceL
+            echo "L2="$L2"; L1="$L1
+            closer $L1 $L2
+            echo "Lcloser="$Lcloser
+         ##############################################
+
+            if [ "$moving" = "far" ]
+              then
+                #ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: -0.025, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+                echo "turn90 START"
+                turn90 $side
+                echo "turn90 DONE"
+            fi
+            if [ "$moving" = "obstacle" ]
+              then
+                echo "rollingForOrtogonal START"
+                rollingForOrtogonal $side
+                echo "rollingForOrtogonal DONE"
+
+                set_distanceL $targetX $targetY
+                L1=$distanceL
+                echo "After rolling for ortogonal set L1="$L1
+            fi
+        done
+        set_distanceL $targetX $targetY
+        #L3=$distanceL
+
+}
 
 
 function vfhMotion() {
@@ -648,14 +750,16 @@ function vfhMotion() {
 
     i=0
     echo "numberOfCandidateSectors="$numberOfCandidateSectors
+    expanded_i_numberofCandidateSectors=($(python3 multiply_I1_I2.py "4" $numberOfCandidateSectors))
+    echo "expanded_i_numberofCandidateSectors="$expanded_i_numberofCandidateSectors
 
-    while [ $i -lt $numberOfCandidateSectors ]; do
+    while [ $i -lt $expanded_i_numberofCandidateSectors ]; do
       start=$((1+$i))
       end=$(($i+2))
       obstacleStart=$(($i+3))
       obstacleEnd=$(($i+4))
-      i=$(($i+4))
       echo "angleSector"$i"=["${close[$start]}","${close[$end]}"] in distances=["${close[$obstacleStart]}","${close[$obstacleEnd]}"]"
+      i=$(($i+4))
     done
 
     echo "turn_target="${close[$(($obstacleEnd+1))]}
@@ -741,7 +845,47 @@ function vfhMotion() {
     echo "END vfh* single"
 }
 
+function archMotion3() {
+    echo "start modified vfh*"
+    time1=($(python3 getTime.py))
+    echo "Start time="$time1
+    while [ "false" = "$goal" ]; do
+      echo "moveToTargetWithStop START"
+      moveToTargetWithStop $targetX $targetY
+      echo "moveToTargetWithStop DONE"
+      if [ "true" = "$goal" ]
+        then
+          echo "goal REACHED"
+          break
+      fi
+      set_distanceL $targetX $targetY
+      L1my=$distanceL
+      echo "L1 before vfh single="$L1my
+      echo "Started vfh motion"
+      vfhMotion
+      echo "Ended vfh motion"
+      set_distanceL $targetX $targetY
+      L2my=$distanceL
+      echo "L1 after (before) vfh single="$L1my
+      echo "L2 after vfh single="$L2my
+
+      closer $L1my $L2my
+      echo "BEFORE BUG motion checked Lcloser="$Lcloser
+
+      if [ "False" = "$Lcloser" ]
+      then
+        echo "Started bug motion"
+        bugMotionArch
+        echo "Ended bug motion"
+      fi
+
+    done
+    time=($(python3 getTime.py))
+    echo "Start time="$time1" End time="$time
+}
 
 #archMotion
 #archMotion2
-vfhMotion
+#vfhMotion
+
+archMotion3
