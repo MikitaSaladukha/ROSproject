@@ -1,13 +1,13 @@
 #!/bin/bash
 source /opt/ros/humble/setup.bash
 #cabinet begin
-#targetX="4"
-#targetY="-2"
+targetX="4"
+targetY="7"
 #cabinet end
 
 #cubes cilinders begin
-targetX="9"
-targetY="0"
+#targetX="9"
+#targetY="0"
 #cubes cilinders end
 
 #cubes:
@@ -263,8 +263,10 @@ function moveToTargetWithStop() {
 
 }
 function rollingForOrtogonal() {
+  echo "started rollingForOrtogonal"
   command="rolling"
   side=$1
+  echo "after start of rollingForOrtogonal: side="$side
   while [ "good" != "$command" ]; do
     i=$(ros2 topic echo --once /scan -f)
     command1=($(python3 rollingForOrtogonal.py $i $side))
@@ -287,6 +289,7 @@ function rollingForOrtogonal() {
 
     fi
   done
+  echo "ended rollingForOrtogonal"
 
 }
 moving="moving"
@@ -488,10 +491,10 @@ function roundToTargetAngle() {
 
 function movingFront2() {
   moving="moving"
-  ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.06, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+  ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.08, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
   #sleep 2
   while [ "moving" = "$moving" ]; do
-    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.03, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.05, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
 
     echo "check GOAL"
     i=$(ros2 topic echo --once /odom)
@@ -516,7 +519,7 @@ function movingFront2() {
 
 
     i=$(ros2 topic echo --once /scan -f)
-    moving=($(python3 movingFront.py $i $side "0.27" "0.37"))
+    moving=($(python3 movingFront.py $i $side "0.89" "0.97"))
 
     echo "moving="$moving
   done
@@ -668,6 +671,7 @@ function archMotion2() {
 
 
 function bugMotionArch() {
+        echo "BUG motion STARTED"
         if [ "true" = "$goal" ]
           then
             echo "goal REACHED"
@@ -712,6 +716,12 @@ function bugMotionArch() {
             echo "Lcloser="$Lcloser
          ##############################################
 
+            if [ "$Lcloser" = "True" ]
+              then
+                echo "moved closer"
+                #ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: -0.025, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+                break
+            fi
             if [ "$moving" = "far" ]
               then
                 #ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: -0.025, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
@@ -730,9 +740,10 @@ function bugMotionArch() {
                 echo "After rolling for ortogonal set L1="$L1
             fi
         done
-        set_distanceL $targetX $targetY
+        #set_distanceL $targetX $targetY
         #L3=$distanceL
-
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: -0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+        echo "BUG motion ENDED"
 }
 
 
@@ -804,7 +815,7 @@ function vfhMotion() {
       echo "openFreeDistance="$openFreeDistance
       echo "diffL="$diffL
       echo "diffExtent="$diffExtent
-      echo "Lcloser="$Lcloser
+      echo "Distance reached="$Lcloser
       if [ "True" = "$Lcloser" ]
           then
             echo "distance moved by vfh*"
@@ -831,6 +842,17 @@ function vfhMotion() {
       fi
       echo "goal check DONE"
 
+      i=$(ros2 topic echo --once /scan -f)
+      close=($(python3 getClosestAngleDist.py $i "3.6"))
+      sideTemp=${close[-1]}
+      angle=${close[-2]}
+      if [ "none" != "$sideTemp" ]
+          then
+            side=$sideTemp
+      fi
+      echo "temporal vfh: sideTemp="$sideTemp
+      echo "temporal vfh: angle="$angle
+      echo "temporal vfh: side="$side
     done
 
 
@@ -841,7 +863,14 @@ function vfhMotion() {
 
     i=$(ros2 topic echo --once /scan -f)
     close=($(python3 getClosestAngleDist.py $i "3.6"))
-    side=${close[-1]}
+    sideTemp=${close[-1]}
+    angle=${close[-2]}
+    if [ "none" != "$sideTemp" ]
+        then
+          side=$sideTemp
+    fi
+    echo "after vfh: side="$side
+    echo "after vfh: angle="$angle
     echo "END vfh* single"
 }
 
