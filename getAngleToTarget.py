@@ -57,6 +57,8 @@ if __name__ == '__main__':
         targetAngle = -180 + math.degrees(math.atan((targetY - positionY) / (targetX - positionX)))
     else:
         targetAngle=math.degrees(math.atan((targetY-positionY)/(targetX-positionX)))
+
+    if targetAngle < -180: targetAngle = targetAngle + 360
     print_angle(currentAngle,targetAngle)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
