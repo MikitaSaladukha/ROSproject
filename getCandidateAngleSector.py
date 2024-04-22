@@ -243,7 +243,7 @@ if __name__ == '__main__':
         temp_turn_target_delta = twoValues2[0]
         rangeDistance2 = twoValues2[1]
         temp_directionOfSector = twoValues2[2]
-        if math.fabs(temp_turn_target_delta - check_with_minus_relative_target_angle) < math.fabs(turn_target_delta - check_with_minus_relative_target_angle):
+        if math.fabs(temp_turn_target_delta - relative_target_angle) < math.fabs(turn_target_delta - relative_target_angle):
             turn_target_delta = temp_turn_target_delta
             selectedIndex = i
             rangeDistance = rangeDistance2
