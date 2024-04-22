@@ -117,7 +117,7 @@ function checkOnLine() {
 
 }
 side="none"
-closeDistance="0.4"
+closeDistance="0.6"
 function moveToTargetWithStop() {
   goal="false"
   near="false"
@@ -277,7 +277,7 @@ function rollingForOrtogonal() {
 moving="moving"
 function movingFront() {
   moving="moving"
-  ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.06, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+  ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.08, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
   #sleep 2
   while [ "moving" = "$moving" ]; do
     echo "checkOnline START"
@@ -290,9 +290,9 @@ function movingFront() {
         break
     fi
 
-    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.03, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.04, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
     i=$(ros2 topic echo --once /scan -f)
-    moving=($(python3 movingFront.py $i $side "0.27" "0.37"))
+    moving=($(python3 movingFront.py $i $side "0.47" "0.57"))
 
     echo "moving="$moving
   done
@@ -323,8 +323,8 @@ function turn90() {
   ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
 }
 
-targetX="9"
-targetY="0"
+targetX="4"
+targetY="3"
 
 set_k_b $targetX $targetY
 echo "k="$k
