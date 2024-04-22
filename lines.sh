@@ -2,7 +2,7 @@
 source /opt/ros/humble/setup.bash
 #cabinet begin
 targetX="4"
-targetY="7"
+targetY="3"
 #cabinet end
 
 #cubes cilinders begin
