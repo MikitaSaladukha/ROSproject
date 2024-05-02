@@ -491,10 +491,10 @@ function roundToTargetAngle() {
 
 function movingFront2() {
   moving="moving"
-  ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.08, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+  ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 1.59, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
   #sleep 2
   while [ "moving" = "$moving" ]; do
-    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.05, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.85, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
 
     echo "check GOAL"
     i=$(ros2 topic echo --once /odom)
