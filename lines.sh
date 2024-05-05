@@ -290,7 +290,7 @@ function movingFront() {
         break
     fi
 
-    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.04, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.02, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
     i=$(ros2 topic echo --once /scan -f)
     moving=($(python3 movingFront.py $i $side "0.47" "0.57"))
 
