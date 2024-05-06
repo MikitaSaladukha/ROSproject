@@ -162,11 +162,13 @@ if __name__ == '__main__':
 
 
         broadCandidateSectors = []
-        for candidate in candidateSectors:
-            # broadth = 2 * RForCandidate * RForCandidate * (1 - math.cos(math.radians(math.fabs(candidate[1] - candidate[0]))))
-            # if ((math.fabs(candidate[1] - candidate[0]) >= 180) or
-            #     (broadth>= 0.6)): ## 0.3 - широта робота, но мы делаем с запасом, 0.6
-            broadCandidateSectors.append([candidate[0],candidate[1],candidate[2],candidate[3]])
+        for i in range(0, len(candidateSectors)):
+            candidate = [candidateSectors[i][0],candidateSectors[i][1],candidateSectors[i][2],candidateSectors[i][3]]
+            broadth = 2 * RForCandidate * RForCandidate * (1 - math.cos(math.radians(math.fabs(candidate[1] - candidate[0]))))
+            if ((math.fabs(candidate[1] - candidate[0]) >= 180) or
+               (broadth>= 1.1)) or (i == 0 and inverse_obsltacle): ## 0.3 - широта робота, но мы делаем с запасом, 0.6
+                broadCandidateSectors.append([candidate[0],candidate[1],candidate[2],candidate[3]])
+
 
         if len(broadCandidateSectors) == 0:
             broadCandidateSectors = broadCandidateSectorsPrevious
@@ -197,12 +199,13 @@ if __name__ == '__main__':
     temp_turn_target_delta = twoValues2[0]
     rangeDistance2 = twoValues2[1]
     temp_directionOfSector = twoValues2[2]
+    delta1 = math.fabs(temp_turn_target_delta - check_with_minus_relative_target_angle)
     # print("direction_of_sector!=",temp_directionOfSector)
     if math.fabs(temp_turn_target_delta - check_with_minus_relative_target_angle) <= math.fabs(turn_target_delta - check_with_minus_relative_target_angle):
         turn_target_delta = temp_turn_target_delta
         rangeDistance = rangeDistance2
         directionOfSector = temp_directionOfSector
-
+    delta2 = 360
 ###????????????????????????????????
     if (not inverse_obsltacle) :
         twoValues2 = getTempTurnTargetDeltaAndRangeDistance(broadCandidateSectors, selectedIndex,minus_relative_target_angle360)
@@ -211,19 +214,25 @@ if __name__ == '__main__':
         temp_directionOfSector = twoValues2[2]
     ##temp_turn_target_delta360 = temp_turn_target_delta + 360
     # print("direction_of_sector!=",temp_directionOfSector)
-        if math.fabs(temp_turn_target_delta+360 - minus_relative_target_angle360) <= math.fabs(turn_target_delta+360 - minus_relative_target_angle360):
+        delta2 = math.fabs(temp_turn_target_delta+360 - minus_relative_target_angle360)
+        if math.fabs(temp_turn_target_delta+360 - minus_relative_target_angle360) <= math.fabs(turn_target_delta+360 - minus_relative_target_angle360)\
+                and delta2 < delta1:
             turn_target_delta = temp_turn_target_delta
             rangeDistance = rangeDistance2
             directionOfSector = temp_directionOfSector
 
-
+    delta3=360
+    delta4=360
+    delta5=360
     for i in range(1,len(broadCandidateSectors)):
 
         twoValues2 = getTempTurnTargetDeltaAndRangeDistance(broadCandidateSectors,i,check_with_minus_relative_target_angle)
         temp_turn_target_delta = twoValues2[0]
         rangeDistance2 = twoValues2[1]
         temp_directionOfSector = twoValues2[2]
-        if math.fabs(temp_turn_target_delta - check_with_minus_relative_target_angle) < math.fabs(turn_target_delta - check_with_minus_relative_target_angle):
+        delta3 = math.fabs(temp_turn_target_delta - check_with_minus_relative_target_angle)
+        if math.fabs(temp_turn_target_delta - check_with_minus_relative_target_angle) < math.fabs(turn_target_delta - check_with_minus_relative_target_angle)\
+               and delta3 < delta1 and delta3 < delta2:
             turn_target_delta = temp_turn_target_delta
             selectedIndex = i
             rangeDistance = rangeDistance2
@@ -233,7 +242,9 @@ if __name__ == '__main__':
         temp_turn_target_delta = twoValues2[0]
         rangeDistance2 = twoValues2[1]
         temp_directionOfSector = twoValues2[2]
-        if math.fabs(temp_turn_target_delta + 360 - minus_relative_target_angle360) <= math.fabs(turn_target_delta + 360 - minus_relative_target_angle360):
+        delta4 = math.fabs(temp_turn_target_delta + 360 - minus_relative_target_angle360)
+        if math.fabs(temp_turn_target_delta + 360 - minus_relative_target_angle360) < math.fabs(turn_target_delta + 360 - minus_relative_target_angle360)\
+                and delta4 < delta1 and delta4 < delta2 and delta4 < delta3:
             turn_target_delta = temp_turn_target_delta
             rangeDistance = rangeDistance2
             directionOfSector = temp_directionOfSector
@@ -243,7 +254,9 @@ if __name__ == '__main__':
         temp_turn_target_delta = twoValues2[0]
         rangeDistance2 = twoValues2[1]
         temp_directionOfSector = twoValues2[2]
-        if math.fabs(temp_turn_target_delta - relative_target_angle) < math.fabs(turn_target_delta - relative_target_angle):
+        delta5 = math.fabs(temp_turn_target_delta - relative_target_angle)
+        if math.fabs(temp_turn_target_delta - relative_target_angle) < math.fabs(turn_target_delta - relative_target_angle)\
+                and delta5 < delta1 and  delta5 < delta2 and delta5 < delta3 and  delta5 < delta4:
             turn_target_delta = temp_turn_target_delta
             selectedIndex = i
             rangeDistance = rangeDistance2
@@ -253,7 +266,7 @@ if __name__ == '__main__':
     if math.fabs(turn_target_delta - relative_target_angle) <= 0.00000000001:
         target = angle_target ## проверить сравнить углы
     else:
-        target = angle_current + turn_target_delta+ directionOfSector*9# + 7
+        target = angle_current + turn_target_delta+ directionOfSector*13# + 7
 
     if target < -180 : target = target + 360
     if directionOfSector == 0 : target = angle_target
@@ -268,4 +281,11 @@ if __name__ == '__main__':
     print(minus_relative_target_angle360)
     print(broadth)
     print(inverse_obsltacle)
+
+    print(delta1)
+    print(delta2)
+    print(delta3)
+    print(delta4)
+    print(delta5)
+
     #print(check_with_360_relative_target_angle2)

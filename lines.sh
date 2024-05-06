@@ -1,13 +1,13 @@
 #!/bin/bash
 source /opt/ros/humble/setup.bash
 #cabinet begin
-targetX="4"
-targetY="3"
+#targetX="4"
+#targetY="3"
 #cabinet end
 
 #cubes cilinders begin
-#targetX="9"
-#targetY="0"
+targetX="9"
+targetY="0"
 #cubes cilinders end
 
 #cubes:
@@ -794,6 +794,12 @@ function vfhMotion() {
 
     echo "broadth="${close[$(($obstacleEnd+8))]}
     echo "inverse obstacle="${close[$(($obstacleEnd+9))]}
+
+    echo "delta1(i=0,relative_target_angle - 360)="${close[$(($obstacleEnd+10))]}
+    echo "delta2(i=0,360 + relative_target_angle)="${close[$(($obstacleEnd+11))]}
+    echo "delta3(relative_target_angle - 360)="${close[$(($obstacleEnd+12))]}
+    echo "delta4(360 + relative_target_angle)="${close[$(($obstacleEnd+13))]}
+    echo "delta5(relative_target_angle)="${close[$(($obstacleEnd+14))]}
     openFreeDistance=${close[$(($obstacleEnd+4))]}
     turnAngle=${close[$(($obstacleEnd+1))]}
     echo "start turning by vfh*"
