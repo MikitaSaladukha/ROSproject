@@ -1,9 +1,18 @@
 #!/bin/bash
 source /opt/ros/humble/setup.bash
+
 #cabinet begin
 #targetX="4"
 #targetY="3"
 #cabinet end
+chmod +x run_gazebo.sh
+gnome-terminal -e ./run_gazebo.sh
+sleep 10
+echo $(pwd)
+
+function stop_gazebo(){
+  killall -9 gazebo & killall -9 gzserver  & killall -9 gzclient
+}
 
 #cubes cilinders begin
 targetX="9"
