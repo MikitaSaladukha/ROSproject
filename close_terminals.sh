@@ -1,7 +1,7 @@
 #!/bin/bash
 
 myid=$(xdotool getactivewindow)
-xdotool search --class "terminal" | while read id
+xdotool search --class "gnome-terminal" | while read id
 do
   if [ "$id" != "$myid" ]
   then
