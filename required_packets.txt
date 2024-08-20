@@ -1,0 +1,7 @@
+go
+kubo (ipfs)
+gazebo11
+xdotool
+xterm
+gnome-terminal
+ros2 humble
