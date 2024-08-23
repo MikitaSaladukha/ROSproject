@@ -1,6 +1,5 @@
 import sys;
 import math;
-import numpy;
 
 if __name__ == '__main__':
     x1=float(sys.argv[1])
