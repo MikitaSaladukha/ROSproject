@@ -21,14 +21,23 @@ def generate_random_q_table():
         arrayX.append([float(x), float(x + stepX)])
         while y < Ymax:
             arrayY.append([float(y), float(y + stepY)])
-            future_jsonY.update({str(arrayY[len(arrayY) - 1]):
-                                     {"vfh": float(random.random()),
+            if ((global_values.Xtarget >= x) and (global_values.Ytarget >= y) and (global_values.Xtarget <= x +stepX) and (global_values.Ytarget <= y +stepY)):
+
+                future_jsonY.update({str(arrayY[len(arrayY) - 1]):
+                                         {"vfh": 10.0,
+                                          "bug_left": 10.0,
+                                          "bug_right": 10.0}})
+            else:
+                future_jsonY.update({str(arrayY[len(arrayY) - 1]):
+                                     {"vfh": 1.001,
                                       "bug_left": float(random.random()),
                                       "bug_right": float(random.random())}})
             y = y + stepY
 
         future_jsonX.update({str(arrayX[len(arrayX) - 1]): future_jsonY})
         x = x + stepX
+        y = Ymin
+        future_jsonY={}
 
     # print(future_jsonX)
     # temp = json.dumps(future_jsonX)  # конвертируем переменную в json
