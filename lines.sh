@@ -2,8 +2,8 @@
 source /opt/ros/humble/setup.bash
 
 #cabinet begin
-#targetX="4"
-#targetY="3"
+targetX="4"
+targetY="3"
 #cabinet end
 
 #
@@ -17,8 +17,8 @@ function stop_gazebo(){
 }
 
 #cubes cilinders begin
-targetX="9"
-targetY="0"
+#targetX="9"
+#targetY="0"
 #cubes cilinders end
 
 #cubes:
@@ -879,6 +879,23 @@ function vfhMotion() {
       echo "temporal vfh: sideTemp="$sideTemp
       echo "temporal vfh: angle="$angle
       echo "temporal vfh: side="$side
+
+      i=$(ros2 topic echo --once /scan -f)
+      close=($(python3 getClosestAngleDist.py $i "0.33"))
+      side=${close[-1]}
+      angle=${close[-2]}
+      echo "close5="${close[-3]}
+      echo "side="$side
+      echo "angle="$angle
+      echo "closest distance="${close[-4]}
+      if [ $side != "none" ]
+        then
+          near="true"
+          ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+          break
+      fi
+
+
     done
 
 
@@ -939,8 +956,93 @@ function archMotion3() {
     echo "Start time="$time1" End time="$time
 }
 
+firstCheck="false"
+function bugMotion() {
+        #side="left_side"
+        firstCheck="false"
+        echo "BUG motion STARTED"
+        if [ "true" = "$goal" ]
+          then
+            echo "goal REACHED"
+            return
+        fi
+
+        echo "rollingForOrtogonal START"
+        rollingForOrtogonal $side
+        echo "rollingForOrtogonal DONE"
+        echo "L1="$L1
+        while [ "True" = "True" ]; do
+            echo "movingFront2 START"
+            movingFront2
+            echo "movingFront2 DONE"
+        ###########################################
+            echo "check GOAL"
+            i=$(ros2 topic echo --once /odom)
+            XYcurrent=($(python3 getAngleToTarget.py $i $targetX $targetY))
+            Xcurr=${XYcurrent[0]};
+            Ycurr=${XYcurrent[1]};
+            delta="0.25"
+            good1=($(python3 isEqualFloat.py $delta $targetX $Xcurr))
+            good2=($(python3 isEqualFloat.py $delta $targetY $Ycurr))
+            # shellcheck disable=SC1073
+            if [ $good1 = "false" -o $good2 = "false" ]
+            then
+              goal="false"
+            else
+              echo "goal REACHED"
+              ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+              goal="true"
+              break
+            fi
+            echo "goal check DONE"
+
+            if [ "$moving" = "far" ]
+              then
+                if [ "$firstCheck" = "true" ]
+                  then
+                    echo "bug far BREAK"
+                    break
+                  fi
+                #ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: -0.025, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+                echo "turn90 START"
+                turn90 $side
+                echo "turn90 DONE"
+            fi
+            if [ "$moving" = "obstacle" ]
+              then
+                if [ "$firstCheck" = "true" ]
+                  then
+                    echo "bug obstacle BREAK"
+                    break
+                  fi
+                echo "rollingForOrtogonal START"
+                rollingForOrtogonal $side
+                echo "rollingForOrtogonal DONE"
+                firstCheck="true"
+                echo "firstCheck set to true"
+
+            fi
+        done
+        #set_distanceL $targetX $targetY
+        #L3=$distanceL
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: -0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+        echo "BUG motion ENDED"
+}
+function bugMotionLeftSide() {
+  side="left_side"
+  bugMotion
+}
+
+function bugMotionRightSide() {
+  side="right_side"
+  bugMotion
+}
+
 #archMotion
 #archMotion2
-#vfhMotion
+vfhMotion
+vfhMotion
+bugMotionLeftSide
+bugMotionRightSide
+#archMotion3
 
-archMotion3
