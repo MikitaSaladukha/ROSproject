@@ -5,7 +5,8 @@ source /opt/ros/humble/setup.bash
 targetX="4"
 targetY="3"
 #cabinet end
-
+set_global=($(python3 global_values.py $targetX $targetY))
+echo ${set_global[0]}" "${set_global[1]}" "${set_global[2]}" "${set_global[3]}" "${set_global[4]}" "${set_global[5]}" "${set_global[6]}" "${set_global[7]}
 #
 #chmod +x run_gazebo.sh
 #gnome-terminal -- ./run_gazebo.sh
@@ -1040,9 +1041,56 @@ function bugMotionRightSide() {
 
 #archMotion
 #archMotion2
-vfhMotion
-vfhMotion
-bugMotionLeftSide
-bugMotionRightSide
+
 #archMotion3
+
+#vfhMotion
+#vfhMotion
+#bugMotionLeftSide
+#bugMotionRightSide
+function motionAccordingToQtable() {
+  i=$(ros2 topic echo --once /odom)
+  XYcurrent=($(python3 getCurrXY.py $i))
+  Xcurr=${XYcurrent[0]};
+  Ycurr=${XYcurrent[1]};
+  motionVariant=($(python3 get_qtable_action.py $Xcurr $Ycurr))
+  echo $motionVariant
+  if [ "vfh" = "$motionVariant" ]
+    then
+      vfhMotion
+  fi
+  if [ "bug_left" = "$motionVariant" ]
+    then
+      bugMotionLeftSide
+  fi
+  if [ "bug_right" = "$motionVariant" ]
+    then
+      bugMotionRightSide
+  fi
+}
+
+
+
+function qMotion() {
+  text=($(python3 random_q_table.py))
+  echo $text
+
+  i=$(ros2 topic echo --once /scan -f)
+  close=($(python3 getClosestAngleDist.py $i "3.5"))
+  side=${close[-1]}
+  angle=${close[-2]}
+  echo "side="$side
+
+
+  if [ $side == "none" ]
+      then
+        vfhMotion
+      else
+        motionAccordingToQtable
+  fi
+
+
+}
+
+qMotion
 

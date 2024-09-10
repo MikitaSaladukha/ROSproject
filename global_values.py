@@ -1,14 +1,14 @@
 import sys
 
 
-Xmin = 0
-Xmax = 5
-Ymin = 0
-Ymax = 5
+Xmin = -10
+Xmax = 10
+Ymin = -10
+Ymax = 10
 stepX = 1
 stepY = 1
-Xtarget = 2
-Ytarget = 3
+Xtarget = 4.0
+Ytarget = 3.0
 x = Xmin
 y = Ymin
 
@@ -27,13 +27,14 @@ def set_arrays_borders():
 
 
 if __name__ == '__main__':
-
-    Xmin=float(sys.argv[0])
-    Xmax = float(sys.argv[1])
-    Ymin=float(sys.argv[2])
-    Ymax = float(sys.argv[3])
-    stepX=float(sys.argv[4])
-    stepY = float(sys.argv[5])
-    Xtarget = float(sys.argv[6])
-    Ytarget = float(sys.argv[7])
-    print("global values set")
+    #
+    # Xmin=float(sys.argv[0])
+    # Xmax = float(sys.argv[1])
+    # Ymin=float(sys.argv[2])
+    # Ymax = float(sys.argv[3])
+    # stepX=float(sys.argv[4])
+    # stepY = float(sys.argv[5])
+    Xtarget = float(sys.argv[1])
+    Ytarget = float(sys.argv[2])
+    set_arrays_borders()
+    print("global values set, Xtarget=", Xtarget, "; Ytarget=", Ytarget)

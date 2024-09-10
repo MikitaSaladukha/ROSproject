@@ -31,7 +31,8 @@ def generate_random_q_table():
                 future_jsonY.update({str(arrayY[len(arrayY) - 1]):
                                      {"vfh": 1.01,
                                       "bug_left": 1.00001,
-                                      "bug_right": float(random.random())}})
+                                      "bug_right": 1.1#float(random.random())
+                                      }})
             y = y + stepY
 
         future_jsonX.update({str(arrayX[len(arrayX) - 1]): future_jsonY})
@@ -49,6 +50,7 @@ def generate_random_q_table():
     with open('qtable.json', 'w') as f:
         json.dump(future_jsonX, f, ensure_ascii=False)
 
+    print("Random_q_table_generated")
     # newQreward = 145.678
     # with open('qtable.json') as f:
     #     d = json.load(f)
