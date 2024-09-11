@@ -1008,6 +1008,8 @@ function bugMotion() {
                 echo "turn90 START"
                 turn90 $side
                 echo "turn90 DONE"
+                firstCheck="true"
+                echo "firstCheck set to true"
             fi
             if [ "$moving" = "obstacle" ]
               then
@@ -1051,9 +1053,9 @@ function bugMotionRightSide() {
 function motionAccordingToQtable() {
   i=$(ros2 topic echo --once /odom)
   XYcurrent=($(python3 getCurrXY.py $i))
-  Xcurr=${XYcurrent[0]};
-  Ycurr=${XYcurrent[1]};
-  motionVariant=($(python3 get_qtable_action.py $Xcurr $Ycurr))
+  Xprev=${XYcurrent[0]};
+  Yprev=${XYcurrent[1]};
+  motionVariant=($(python3 get_qtable_action.py $Xprev $Yprev))
   echo $motionVariant
   if [ "vfh" = "$motionVariant" ]
     then
@@ -1067,6 +1069,13 @@ function motionAccordingToQtable() {
     then
       bugMotionRightSide
   fi
+  i=$(ros2 topic echo --once /odom)
+  XYcurrent=($(python3 getCurrXY.py $i))
+  Xcurr=${XYcurrent[0]};
+  Ycurr=${XYcurrent[1]};
+
+  qtableUpdated=($(python3 update_qtable.py $Xcurr $Ycurr $Xprev $Yprev $motionVariant))
+  echo $qtableUpdated
 }
 
 
