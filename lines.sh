@@ -961,6 +961,7 @@ firstCheck="false"
 function bugMotion() {
         #side="left_side"
         firstCheck="false"
+        zeroCheck="false"
         echo "BUG motion STARTED"
         if [ "true" = "$goal" ]
           then
@@ -1003,13 +1004,18 @@ function bugMotion() {
                   then
                     echo "bug far BREAK"
                     break
-                  fi
+                fi
                 #ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: -0.025, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
                 echo "turn90 START"
                 turn90 $side
                 echo "turn90 DONE"
-                firstCheck="true"
-                echo "firstCheck set to true"
+                if [ "$zeroCheck" = "true" ]
+                  then
+                    firstCheck="true"
+                    echo "firstCheck set to true"
+                fi
+                zeroCheck="true"
+                echo "zeroCheck set to true"
             fi
             if [ "$moving" = "obstacle" ]
               then

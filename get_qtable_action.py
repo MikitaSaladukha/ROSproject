@@ -1,12 +1,14 @@
+from random import random
+
 import global_values
 import sys
 import json
+import numpy
+import random
 
 if __name__ == '__main__':
     x_target = float(sys.argv[1])
     y_target = float(sys.argv[2])
-
-
     Xmin=global_values.Xmin
     Xmax = global_values.Xmax
     Ymin= global_values.Ymin
@@ -39,9 +41,16 @@ if __name__ == '__main__':
     bug_left_action_reward=d[str(resultX)][str(resultY)]["bug_left"]
     bug_right_action_reward=d[str(resultX)][str(resultY)]["bug_right"]
     max=max(bug_left_action_reward,bug_right_action_reward, vfh_action_reward)
-    if max==vfh_action_reward:
-        print("vfh")
-    elif max==bug_left_action_reward:
-        print("bug_left")
-    elif max==bug_right_action_reward:
-        print("bug_right")
+    randomMove=False
+
+    if (numpy.random.rand() < global_values.epsilon):
+        print(random.choice(["vfh","bug_left","bug_right"]))
+        randomMove=True
+
+    if not randomMove:
+        if max==vfh_action_reward:
+            print("vfh")
+        elif max==bug_left_action_reward:
+            print("bug_left")
+        elif max==bug_right_action_reward:
+            print("bug_right")
