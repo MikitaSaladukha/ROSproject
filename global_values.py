@@ -3,6 +3,8 @@ import sys
 alpha = 0.1
 gamma = 0.9
 epsilon = 0.1
+immediate_reward = -1
+total_episode_reward = 0
 
 Xmin = -10
 Xmax = 10
@@ -39,5 +41,6 @@ if __name__ == '__main__':
     # stepY = float(sys.argv[5])
     Xtarget = float(sys.argv[1])
     Ytarget = float(sys.argv[2])
+    total_episode_reward = 0
     set_arrays_borders()
-    print("global values set, Xtarget=", Xtarget, "; Ytarget=", Ytarget)
+    print("reward_to_zero_global values set, Xtarget=", Xtarget, "; Ytarget=", Ytarget)

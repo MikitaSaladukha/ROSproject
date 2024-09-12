@@ -44,13 +44,15 @@ if __name__ == '__main__':
     max_reward_from_current=max(bug_left_action_reward,bug_right_action_reward, vfh_action_reward)
 
     if abs(x_current-global_values.Xtarget) < 0.25 and abs(y_current-global_values.Ytarget) < 0.25:
-        reward=0
+        reward=2
     else:
-        reward=-1
+        reward=global_values.immediate_reward
 
     d[str(xyPrevious[0])][str(xyPrevious[1])][action_previous]=(1 - global_values.alpha) * d[str(xyPrevious[0])][str(xyPrevious[1])][action_previous] + global_values.alpha * (reward + global_values.gamma * max_reward_from_current)
+    global_values.total_episode_reward += d[str(xyPrevious[0])][str(xyPrevious[1])][action_previous]
 
     with open('qtable.json', 'w') as f:
         json.dump(d, f, ensure_ascii=False)
 
     print("Qtable_updated_successfully")
+    print("qtable.json:[",str(xyPrevious[0]),"][",str(xyPrevious[1]),"], action=",action_previous,"; value=", d[str(xyPrevious[0])][str(xyPrevious[1])][action_previous])

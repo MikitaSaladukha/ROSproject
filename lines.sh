@@ -4,6 +4,7 @@ source /opt/ros/humble/setup.bash
 #cabinet begin
 targetX="4"
 targetY="3"
+max_number_of_steps_per_episode=3
 #cabinet end
 set_global=($(python3 global_values.py $targetX $targetY))
 echo ${set_global[0]}" "${set_global[1]}" "${set_global[2]}" "${set_global[3]}" "${set_global[4]}" "${set_global[5]}" "${set_global[6]}" "${set_global[7]}
@@ -1081,7 +1082,7 @@ function motionAccordingToQtable() {
   Ycurr=${XYcurrent[1]};
 
   qtableUpdated=($(python3 update_qtable.py $Xcurr $Ycurr $Xprev $Yprev $motionVariant))
-  echo $qtableUpdated
+  echo ${qtableUpdated[0]}" "${qtableUpdated[1]}" "${qtableUpdated[2]}" "${qtableUpdated[3]}" "${qtableUpdated[4]}" "${qtableUpdated[5]}" "${qtableUpdated[6]}" "${qtableUpdated[7]}" "${qtableUpdated[8]}" "${qtableUpdated[9]}" "${qtableUpdated[10]}" "${qtableUpdated[11]}" "${qtableUpdated[12]}" "
 }
 
 
@@ -1090,22 +1091,71 @@ function qMotion() {
   text=($(python3 random_q_table.py))
   echo $text
 
-  i=$(ros2 topic echo --once /scan -f)
-  close=($(python3 getClosestAngleDist.py $i "3.5"))
-  side=${close[-1]}
-  angle=${close[-2]}
-  echo "side="$side
+
+  set_global=($(python3 global_values.py $targetX $targetY))
+  echo ${set_global[0]}" "${set_global[1]}" "${set_global[2]}" "${set_global[3]}" "${set_global[4]}" "${set_global[5]}" "${set_global[6]}" "${set_global[7]}
+  echo "episode_started"
+  step_number=0
+  while [ "True" = "True" ]; do
+    echo "step_started"
+    i=$(ros2 topic echo --once /scan -f)
+    close=($(python3 getClosestAngleDist.py $i "0.91"))
+    side=${close[-1]}
+    angle=${close[-2]}
+    echo "side="$side
 
 
-  if [ $side == "none" ]
+    if [ $side == "none" ]
+        then
+          vfhMotion
+        else
+          motionAccordingToQtable
+    fi
+    step_number=$(($step_number+1))
+    if [ "$step_number" -gt "$max_number_of_steps_per_episode" ]
       then
-        vfhMotion
+        echo "steps_limit_overcome"
+        break
       else
-        motionAccordingToQtable
-  fi
+        echo "step_finished"
+    fi
+
+
+    echo "check GOAL"
+    i=$(ros2 topic echo --once /odom)
+    XYcurrent=($(python3 getAngleToTarget.py $i $targetX $targetY))
+    Xcurr=${XYcurrent[0]};
+    Ycurr=${XYcurrent[1]};
+    delta="0.25"
+    good1=($(python3 isEqualFloat.py $delta $targetX $Xcurr))
+    good2=($(python3 isEqualFloat.py $delta $targetY $Ycurr))
+    # shellcheck disable=SC1073
+    if [ $good1 = "false" -o $good2 = "false" ]
+    then
+      goal="false"
+    else
+      echo "goal REACHED"
+      ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+      goal="true"
+      break
+    fi
+    echo "goal check DONE"
+
+  done
+
+  echo "one_learning_episode_FINISHED"
 
 
 }
+#motionVariant="bug_left"
+#Xcurr="1.1"
+#Ycurr="2.1"
+#Xprev="-3.1"
+#Yprev="-4.5"
+#
+#qtableUpdated=($(python3 update_qtable.py $Xcurr $Ycurr $Xprev $Yprev $motionVariant))
+#echo ${qtableUpdated[0]}" "${qtableUpdated[1]}" "${qtableUpdated[2]}" "${qtableUpdated[3]}" "${qtableUpdated[4]}" "${qtableUpdated[5]}" "${qtableUpdated[6]}" "${qtableUpdated[7]}" "${qtableUpdated[8]}" "${qtableUpdated[9]}" "${qtableUpdated[10]}" "${qtableUpdated[11]}" "${qtableUpdated[12]}" "
+
 
 qMotion
 

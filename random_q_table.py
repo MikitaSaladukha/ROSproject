@@ -29,9 +29,9 @@ def generate_random_q_table():
                                           "bug_right": 10.0}})
             else:
                 future_jsonY.update({str(arrayY[len(arrayY) - 1]):
-                                     {"vfh": 1.01,
+                                     {"vfh": 1.1,
                                       "bug_left": 1.00001,
-                                      "bug_right": 1.1#float(random.random())
+                                      "bug_right": float(random.random())
                                       }})
             y = y + stepY
 
