@@ -5,3 +5,4 @@ xdotool
 xterm
 gnome-terminal
 ros2 humble
+set bash to default terminal shell
