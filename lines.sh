@@ -1,11 +1,27 @@
 #!/bin/bash
 source /opt/ros/humble/setup.bash
 
+simualtion_area="cabinet"
+
 #cabinet begin
 targetX="4"
 targetY="3"
 max_number_of_steps_per_episode=3
+max_episodes_number=2
 #cabinet end
+
+export simualtion_area="$simualtion_area"
+
+
+
+chmod +x run_gazebo.sh
+chmod +x close_terminals.sh
+gnome-terminal -e 'sh -c "source /opt/ros/humble/setup.bash; export TURTLEBOT3_MODEL=burger; export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:`ros2 pkg prefix turtlebot3_gazebo `/share/turtlebot3_gazebo/models/; ros2 launch turtlebot3_gazebo $simualtion_area.launch.py"'
+
+
+sleep 8
+
+
 set_global=($(python3 global_values.py $targetX $targetY))
 echo ${set_global[0]}" "${set_global[1]}" "${set_global[2]}" "${set_global[3]}" "${set_global[4]}" "${set_global[5]}" "${set_global[6]}" "${set_global[7]}
 #
@@ -1087,11 +1103,7 @@ function motionAccordingToQtable() {
 
 
 
-function qMotion() {
-  text=($(python3 random_q_table.py))
-  echo $text
-
-
+function OneEpisodeMotion() {
   set_global=($(python3 global_values.py $targetX $targetY))
   echo ${set_global[0]}" "${set_global[1]}" "${set_global[2]}" "${set_global[3]}" "${set_global[4]}" "${set_global[5]}" "${set_global[6]}" "${set_global[7]}
   echo "episode_started"
@@ -1156,6 +1168,43 @@ function qMotion() {
 #qtableUpdated=($(python3 update_qtable.py $Xcurr $Ycurr $Xprev $Yprev $motionVariant))
 #echo ${qtableUpdated[0]}" "${qtableUpdated[1]}" "${qtableUpdated[2]}" "${qtableUpdated[3]}" "${qtableUpdated[4]}" "${qtableUpdated[5]}" "${qtableUpdated[6]}" "${qtableUpdated[7]}" "${qtableUpdated[8]}" "${qtableUpdated[9]}" "${qtableUpdated[10]}" "${qtableUpdated[11]}" "${qtableUpdated[12]}" "
 
+function qMotion() {
+  text=($(python3 random_q_table.py))
+  echo $text
+  episode_number=0
+  while [ "True" = "True" ]; do
+    echo "one_learning_episode_STARTED"
+#    source /opt/ros/humble/setup.bash
+#    export TURTLEBOT3_MODEL=burger
+#    export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:`ros2 pkg \
+#    prefix turtlebot3_gazebo \
+#    `/share/turtlebot3_gazebo/models/
+
+#    gnome-terminal -- source /opt/ros/humble/setup.bash && export TURTLEBOT3_MODEL=burger && export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:`ros2 pkg prefix turtlebot3_gazebo `/share/turtlebot3_gazebo/models/ && ros2 launch turtlebot3_gazebo cabinet.launch.py
+#    gnome-terminal -- /bin/sh -c 'source /opt/ros/humble/setup.bash; export TURTLEBOT3_MODEL=burger; export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:`ros2 pkg prefix turtlebot3_gazebo `/share/turtlebot3_gazebo/models/; ros2 launch turtlebot3_gazebo cabinet.launch.py'
+
+    OneEpisodeMotion
+    stop_gazebo
+    ./close_terminals.sh
+    echo "one_learning_episode_FINISHED"
+
+    episode_number=$(($episode_number+1))
+    if [ "$episode_number" -gt "$max_episodes_number" ]
+      then
+        echo "QLearning_finished_by_max_episode_number"
+        break
+      else
+        echo "episode_finished"
+    fi
+
+
+    gnome-terminal -e 'sh -c "source /opt/ros/humble/setup.bash; export TURTLEBOT3_MODEL=burger; export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:`ros2 pkg prefix turtlebot3_gazebo `/share/turtlebot3_gazebo/models/; ros2 launch turtlebot3_gazebo $simualtion_area.launch.py"'
+
+    sleep 8
+  done
+  echo "EXIT"
+
+
+}
 
 qMotion
-
