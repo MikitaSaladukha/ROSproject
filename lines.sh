@@ -6,7 +6,7 @@ simualtion_area="cabinet"
 #cabinet begin
 targetX="4"
 targetY="3"
-max_number_of_steps_per_episode=3
+max_number_of_steps_per_episode=2
 max_episodes_number=2
 #cabinet end
 
@@ -17,9 +17,7 @@ export simualtion_area="$simualtion_area"
 chmod +x run_gazebo.sh
 chmod +x close_terminals.sh
 gnome-terminal -e 'sh -c "source /opt/ros/humble/setup.bash; export TURTLEBOT3_MODEL=burger; export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:`ros2 pkg prefix turtlebot3_gazebo `/share/turtlebot3_gazebo/models/; ros2 launch turtlebot3_gazebo $simualtion_area.launch.py"'
-
-
-sleep 8
+sleep 7
 
 
 set_global=($(python3 global_values.py $targetX $targetY))
@@ -32,6 +30,11 @@ echo ${set_global[0]}" "${set_global[1]}" "${set_global[2]}" "${set_global[3]}" 
 
 function stop_gazebo(){
   killall -9 gazebo & killall -9 gzserver  & killall -9 gzclient
+  #pgrep bash | xargs -r -n1 pstree -p -c | grep -v \- | grep -o '[0-9]\+' | xargs -r kill
+
+  ./close_terminals.sh
+
+
 }
 
 #cubes cilinders begin
@@ -1124,7 +1127,7 @@ function OneEpisodeMotion() {
           motionAccordingToQtable
     fi
     step_number=$(($step_number+1))
-    if [ "$step_number" -gt "$max_number_of_steps_per_episode" ]
+    if [ "$step_number" -ge "$max_number_of_steps_per_episode" ]
       then
         echo "steps_limit_overcome"
         break
@@ -1185,11 +1188,11 @@ function qMotion() {
 
     OneEpisodeMotion
     stop_gazebo
-    ./close_terminals.sh
+    #./close_terminals.sh
     echo "one_learning_episode_FINISHED"
 
     episode_number=$(($episode_number+1))
-    if [ "$episode_number" -gt "$max_episodes_number" ]
+    if [ "$episode_number" -ge "$max_episodes_number" ]
       then
         echo "QLearning_finished_by_max_episode_number"
         break
@@ -1208,3 +1211,4 @@ function qMotion() {
 }
 
 qMotion
+#stop_gazebo
