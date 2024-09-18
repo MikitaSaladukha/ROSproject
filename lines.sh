@@ -6,7 +6,7 @@ simualtion_area="cabinet"
 #cabinet begin
 targetX="4"
 targetY="3"
-max_number_of_steps_per_episode=2
+max_number_of_steps_per_episode=6
 max_episodes_number=2
 #cabinet end
 
@@ -902,7 +902,7 @@ function vfhMotion() {
       echo "temporal vfh: side="$side
 
       i=$(ros2 topic echo --once /scan -f)
-      close=($(python3 getClosestAngleDist.py $i "0.33"))
+      close=($(python3 getClosestAngleDist.py $i "0.87"))
       side=${close[-1]}
       angle=${close[-2]}
       echo "close5="${close[-3]}
