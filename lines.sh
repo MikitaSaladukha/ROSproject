@@ -6,7 +6,7 @@ simualtion_area="cabinet"
 #cabinet begin
 targetX="4"
 targetY="3"
-max_number_of_steps_per_episode=6
+max_number_of_steps_per_episode=8
 max_episodes_number=2
 #cabinet end
 
@@ -571,6 +571,7 @@ function movingFront2() {
 closeDistance2="3.3"
 openFreeDistance=$closeDistance
 turnAngle="0.0"
+closeDistanceInFrontStop="0.87"
 
 function archMotion2() {
     echo "start vfh*"
@@ -838,6 +839,20 @@ function vfhMotion() {
     roundToTargetAngle $turnAngle
     echo "end turning by vfh*"
 
+    ###############check close distance in front###start
+    i=$(ros2 topic echo --once /scan -f)
+    distanceAngle=($(python3 getDistanceFromAngle.py $i "0"))
+    tempDif=($(python3 diffF1_F2.py $distanceAngle $closeDistanceInFrontStop))
+    bigger0=($(python3 biggerThanZero.py $tempDif))
+    if [ "False" = "$bigger0" ]
+      then
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+        echo "obstacle to close in front. vfhMotion stopped"
+        return
+    fi
+    ###############check close distance in front###end
+
+
     i=$(ros2 topic echo --once /odom)
     XYcurrentPrevious=($(python3 getCurrXY.py $i))
     XcurrPrevious=${XYcurrent[0]};
@@ -846,6 +861,18 @@ function vfhMotion() {
     echo "started motion by vfh*"
     ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.06, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
     while [ "true" = "true" ]; do
+      ###############check close distance in front###start
+      i=$(ros2 topic echo --once /scan -f)
+      distanceAngle=($(python3 getDistanceFromAngle.py $i "0"))
+      tempDif=($(python3 diffF1_F2.py $distanceAngle $closeDistanceInFrontStop))
+      bigger0=($(python3 biggerThanZero.py $tempDif))
+      if [ "False" = "$bigger0" ]
+        then
+          ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+          echo "obstacle to close in front. vfhMotion stopped"
+          return
+      fi
+      ###############check close distance in front###end
       ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.06, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
       i=$(ros2 topic echo --once /odom)
       XYcurrent=($(python3 getCurrXY.py $i))
@@ -901,20 +928,18 @@ function vfhMotion() {
       echo "temporal vfh: angle="$angle
       echo "temporal vfh: side="$side
 
+      ###############check close distance in front###start
       i=$(ros2 topic echo --once /scan -f)
-      close=($(python3 getClosestAngleDist.py $i "0.87"))
-      side=${close[-1]}
-      angle=${close[-2]}
-      echo "close5="${close[-3]}
-      echo "side="$side
-      echo "angle="$angle
-      echo "closest distance="${close[-4]}
-      if [ $side != "none" ]
+      distanceAngle=($(python3 getDistanceFromAngle.py $i "0"))
+      tempDif=($(python3 diffF1_F2.py $distanceAngle $closeDistanceInFrontStop))
+      bigger0=($(python3 biggerThanZero.py $tempDif))
+      if [ "False" = "$bigger0" ]
         then
-          near="true"
           ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
-          break
+          echo "obstacle to close in front. vfhMotion stopped"
+          return
       fi
+      ###############check close distance in front###end
 
 
     done
@@ -1211,4 +1236,12 @@ function qMotion() {
 }
 
 qMotion
+#i=$(ros2 topic echo --once /scan -f)
+#distanceAngle=($(python3 getClosestAngleDist.py $i "0"))
+#echo "before motion distance on angle 0="$distanceAngle
+#vfhMotion
+#i=$(ros2 topic echo --once /scan -f)
+#distanceAngle=($(python3 getClosestAngleDist.py $i "0"))
+#echo "after motion distance on angle 0="$distanceAngle
+
 #stop_gazebo
