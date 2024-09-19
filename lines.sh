@@ -788,6 +788,71 @@ function bugMotionArch() {
         echo "BUG motion ENDED"
 }
 
+function rollingForObstacleInFront() {
+  echo "started rollingForObstacleInFront"
+  command="rolling"
+  while [ "good" != "$command" ]; do
+    i=$(ros2 topic echo --once /scan -f)
+    command1=($(python3 rollingForObstacleInFront.py $i))
+    #echo "command1="$command1
+    command=${command1[-1]}
+    echo "command="$command
+    echo "angle="${command1[0]}
+    #sleep 4
+    if [ "$command" = "good" ]
+      then
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+    fi
+    if [ "$command" = "round_plus" ]
+      then
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.01}}'
+    fi
+        if [ "$command" = "round_minus" ]
+      then
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: -0.01}}'
+
+    fi
+  done
+  echo "ended rollingForObstacleInFront"
+}
+
+
+ZAPAS_PO_UGLU=11
+bigger0="False"
+bigger1="False"
+
+function additionalTurning() {
+  echo "additionalTurning started"
+  bigger0="False"
+  bigger1="False"
+  while [ "False" = "$bigger1" -o "False" = "$bigger0" ]; do
+    ###############check close distance in front###start
+    i=$(ros2 topic echo --once /scan -f)
+    distanceAngle=($(python3 getDistanceFromAngle.py $i $ZAPAS_PO_UGLU))
+    tempDif=($(python3 diffF1_F2.py $distanceAngle $openFreeDistance))
+    bigger0=($(python3 biggerThanZero.py $tempDif))
+    if [ "False" = "$bigger0" ]
+      then ##ROLLING MINUS
+        echo "Additional turning minus"
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: -0.01}}'
+    fi
+    ###############check close distance in front###end
+
+
+    i=$(ros2 topic echo --once /scan -f)
+    distanceAngle=($(python3 getDistanceFromAngle.py $i $((360-$ZAPAS_PO_UGLU))))
+    tempDif=($(python3 diffF1_F2.py $distanceAngle $openFreeDistance))
+    bigger1=($(python3 biggerThanZero.py $tempDif))
+    if [ "False" = "$bigger1" ]
+      then ##ROLLING PlUS
+        echo "Additional turning plus"
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.01}}'
+    fi
+    echo "bigger0="$bigger0" bigger1="$bigger1
+  done
+  ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+  echo "additionalTurning finished"
+}
 
 function vfhMotion() {
     echo "START vfh* single"
@@ -839,18 +904,20 @@ function vfhMotion() {
     roundToTargetAngle $turnAngle
     echo "end turning by vfh*"
 
-    ###############check close distance in front###start
-    i=$(ros2 topic echo --once /scan -f)
-    distanceAngle=($(python3 getDistanceFromAngle.py $i "0"))
-    tempDif=($(python3 diffF1_F2.py $distanceAngle $closeDistanceInFrontStop))
-    bigger0=($(python3 biggerThanZero.py $tempDif))
-    if [ "False" = "$bigger0" ]
-      then
-        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
-        echo "obstacle to close in front. vfhMotion stopped"
-        return
-    fi
-    ###############check close distance in front###end
+#    ###############check close distance in front###start
+#    i=$(ros2 topic echo --once /scan -f)
+#    distanceAngle=($(python3 getDistanceFromAngle.py $i "0"))
+#    tempDif=($(python3 diffF1_F2.py $distanceAngle $closeDistanceInFrontStop))
+#    bigger0=($(python3 biggerThanZero.py $tempDif))
+#    if [ "False" = "$bigger0" ]
+#      then
+#        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+#        echo "obstacle to close in front. vfhMotion stopped"#
+#        return
+#    fi
+#    ###############check close distance in front###end
+
+    additionalTurning
 
 
     i=$(ros2 topic echo --once /odom)
@@ -1240,6 +1307,9 @@ qMotion
 #distanceAngle=($(python3 getClosestAngleDist.py $i "0"))
 #echo "before motion distance on angle 0="$distanceAngle
 #vfhMotion
+#vfhMotion
+#vfhMotion
+#rollingForObstacleInFront
 #i=$(ros2 topic echo --once /scan -f)
 #distanceAngle=($(python3 getClosestAngleDist.py $i "0"))
 #echo "after motion distance on angle 0="$distanceAngle

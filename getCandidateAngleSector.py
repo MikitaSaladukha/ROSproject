@@ -7,7 +7,7 @@ import numpy;
  #   initial_temp_turn_target_delta =  turn_target_delta = 360
  # relative_target_angle = round(angle_current - angle_target)
  # if relative_target_angle < 0: relative_target_angle = relative_target_angle + 360
-ZAPAS_PO_UGLU=23 #было 13 в самом начале
+ZAPAS_PO_UGLU=0#23 #было 13 в самом начале
 
 def getTempTurnTargetDeltaAndRangeDistance(broadCandidateSectors,i,relative_target_angle):
 
