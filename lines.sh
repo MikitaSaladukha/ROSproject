@@ -8,6 +8,7 @@ targetX="4"
 targetY="3"
 max_number_of_steps_per_episode=4
 max_episodes_number=2
+max_episode_reward="1.0"
 #cabinet end
 
 export simualtion_area="$simualtion_area"
@@ -1266,6 +1267,13 @@ function OneEpisodeMotion() {
 #qtableUpdated=($(python3 update_qtable.py $Xcurr $Ycurr $Xprev $Yprev $motionVariant))
 #echo ${qtableUpdated[0]}" "${qtableUpdated[1]}" "${qtableUpdated[2]}" "${qtableUpdated[3]}" "${qtableUpdated[4]}" "${qtableUpdated[5]}" "${qtableUpdated[6]}" "${qtableUpdated[7]}" "${qtableUpdated[8]}" "${qtableUpdated[9]}" "${qtableUpdated[10]}" "${qtableUpdated[11]}" "${qtableUpdated[12]}" "
 
+TotalRewardBiggerThanMax="False"
+
+function checkTotalReward() {
+  echo "total_episode_reward="$total_episode_reward" compared to max="$max_episode_reward
+  tempDif=($(python3 diffF1_F2.py $total_episode_reward $max_episode_reward))
+  TotalRewardBiggerThanMax=($(python3 biggerThanZero.py tempDif))
+}
 
 function saveRewardToFile() {
   echo $total_episode_reward >> reward.txt
@@ -1296,6 +1304,14 @@ function qMotion() {
     stop_gazebo
     #./close_terminals.sh
     echo "one_learning_episode_FINISHED"
+    checkTotalReward
+    if [ $TotalRewardBiggerThanMax = "True" ]
+      then
+        echo "Q-learning finished"
+        break
+    fi
+
+
 
     episode_number=$(($episode_number+1))
     if [ "$episode_number" -ge "$max_episodes_number" ]

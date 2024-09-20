@@ -44,7 +44,7 @@ if __name__ == '__main__':
     max_reward_from_current=max(bug_left_action_reward,bug_right_action_reward, vfh_action_reward)
 
     if abs(x_current-global_values.Xtarget) < 0.25 and abs(y_current-global_values.Ytarget) < 0.25:
-        reward=2
+        reward=10
     else:
         reward=global_values.immediate_reward
 

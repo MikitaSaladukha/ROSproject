@@ -15,7 +15,7 @@ def getTempTurnTargetDeltaAndRangeDistance(broadCandidateSectors,i,relative_targ
     lowerAngleBoundary = min(broadCandidateSectors[i][0],broadCandidateSectors[i][1])
     upperAngleBoundary = max(broadCandidateSectors[i][0], broadCandidateSectors[i][1])
     # сделать запас в 5 градусов - чтобы робот не столкнулся краем с препрястввия - возможно, в конце этого всего кода
-    angle_zapas_for_robot = 5
+    angle_zapas_for_robot = 0
 
     #if relative_target_angle < 0 : print ("minus_detected:_",relative_target_angle)
     #if True:#relative_target_angle >= 0:
