@@ -3,7 +3,7 @@ import sys
 alpha = 0.1
 gamma = 0.9
 epsilon = 0.1
-immediate_reward = -1
+immediate_reward = -10
 total_episode_reward = 0
 
 Xmin = -10
