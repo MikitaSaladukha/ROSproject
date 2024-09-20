@@ -6,7 +6,7 @@ simualtion_area="cabinet"
 #cabinet begin
 targetX="4"
 targetY="3"
-max_number_of_steps_per_episode=5
+max_number_of_steps_per_episode=4
 max_episodes_number=2
 #cabinet end
 
@@ -1168,6 +1168,7 @@ function bugMotionRightSide() {
 #vfhMotion
 #bugMotionLeftSide
 #bugMotionRightSide
+total_episode_reward="0"
 function motionAccordingToQtable() {
   i=$(ros2 topic echo --once /odom)
   XYcurrent=($(python3 getCurrXY.py $i))
@@ -1194,6 +1195,8 @@ function motionAccordingToQtable() {
 
   qtableUpdated=($(python3 update_qtable.py $Xcurr $Ycurr $Xprev $Yprev $motionVariant))
   echo ${qtableUpdated[0]}" "${qtableUpdated[1]}" "${qtableUpdated[2]}" "${qtableUpdated[3]}" "${qtableUpdated[4]}" "${qtableUpdated[5]}" "${qtableUpdated[6]}" "${qtableUpdated[7]}" "${qtableUpdated[8]}" "${qtableUpdated[9]}" "${qtableUpdated[10]}" "${qtableUpdated[11]}" "${qtableUpdated[12]}" "
+
+  total_episode_reward=($(python3 summValuesFloat.py ${qtableUpdated[12]} $total_episode_reward))
 }
 
 
@@ -1206,7 +1209,7 @@ function OneEpisodeMotion() {
   while [ "True" = "True" ]; do
     echo "step_started"
     i=$(ros2 topic echo --once /scan -f)
-    close=($(python3 getClosestAngleDist.py $i "1.5"))
+    close=($(python3 getClosestAngleDist.py $i "0.93"))
     side=${close[-1]}
     angle=${close[-2]}
     echo "side="$side
@@ -1263,15 +1266,19 @@ function OneEpisodeMotion() {
 #qtableUpdated=($(python3 update_qtable.py $Xcurr $Ycurr $Xprev $Yprev $motionVariant))
 #echo ${qtableUpdated[0]}" "${qtableUpdated[1]}" "${qtableUpdated[2]}" "${qtableUpdated[3]}" "${qtableUpdated[4]}" "${qtableUpdated[5]}" "${qtableUpdated[6]}" "${qtableUpdated[7]}" "${qtableUpdated[8]}" "${qtableUpdated[9]}" "${qtableUpdated[10]}" "${qtableUpdated[11]}" "${qtableUpdated[12]}" "
 
+
 function saveRewardToFile() {
-  total_episode_reward=($(python3 getTotalEpisodeReward.py))
   echo $total_episode_reward >> reward.txt
+}
+
+function clearRewardFile() {
+    > reward.txt
 }
 
 function qMotion() {
   text=($(python3 random_q_table.py))
   echo $text
-  > reward.txt
+  clearRewardFile
   episode_number=0
   while [ "True" = "True" ]; do
     echo "one_learning_episode_STARTED"
@@ -1309,25 +1316,4 @@ function qMotion() {
 
 }
 
-#qMotion
-vfhMotion
-vfhMotionhh
-bugMotionLeftSide
-bugMotionLeftSide
-bugMotionLeftSide
-bugMotionLeftSide
-bugMotionLeftSide
-bugMotionLeftSide
-
-#i=$(ros2 topic echo --once /scan -f)
-#distanceAngle=($(python3 getClosestAngleDist.py $i "0"))
-#echo "before motion distance on angle 0="$distanceAngle
-#vfhMotion
-#vfhMotion
-#vfhMotion
-#rollingForObstacleInFront
-#i=$(ros2 topic echo --once /scan -f)
-#distanceAngle=($(python3 getClosestAngleDist.py $i "0"))
-#echo "after motion distance on angle 0="$distanceAngle
-
-#stop_gazebo
+qMotion
