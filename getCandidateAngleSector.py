@@ -269,7 +269,7 @@ if __name__ == '__main__':
         target = angle_current + turn_target_delta+ directionOfSector*ZAPAS_PO_UGLU# + 7
 
     if target < -180 : target = target + 360
-    if directionOfSector == 0 : target = angle_target
+    #if directionOfSector == 0 : target = angle_target
     print(target)
 
     RForCandidate = RForCandidate - 0.4

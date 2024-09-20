@@ -1272,7 +1272,7 @@ TotalRewardBiggerThanMax="False"
 function checkTotalReward() {
   echo "total_episode_reward="$total_episode_reward" compared to max="$max_episode_reward
   tempDif=($(python3 diffF1_F2.py $total_episode_reward $max_episode_reward))
-  TotalRewardBiggerThanMax=($(python3 biggerThanZero.py tempDif))
+  TotalRewardBiggerThanMax=($(python3 biggerThanZero.py $tempDif))
 }
 
 function saveRewardToFile() {
