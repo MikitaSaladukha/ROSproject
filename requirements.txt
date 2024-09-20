@@ -1,4 +1,5 @@
 go
+pip tkinter
 kubo (ipfs)
 gazebo11
 xdotool

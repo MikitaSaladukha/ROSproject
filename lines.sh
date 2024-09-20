@@ -1222,6 +1222,14 @@ function OneEpisodeMotion() {
         else
           motionAccordingToQtable
     fi
+
+    c=($(cat commands.txt))
+    if [ $c = "pauseQ" ]
+      then
+        break
+    fi
+
+
     step_number=$(($step_number+1))
     if [ "$step_number" -ge "$max_number_of_steps_per_episode" ]
       then
@@ -1284,10 +1292,26 @@ function clearRewardFile() {
 }
 
 function qMotion() {
-  text=($(python3 random_q_table.py))
-  echo $text
-  clearRewardFile
-  episode_number=0
+  echo "null" > commands.txt
+  python3 gui.py &
+  while [ "True" = "True" ]; do
+    sleep 1
+    c=($(cat commands.txt))
+    if [ $c = "start_from_null" -o $c = "start_from_existing" ]
+      then
+        break
+    fi
+  done
+  if [ $c = "start_from_null" ]
+      then
+        text=($(python3 random_q_table.py))
+        echo $text
+        clearRewardFile
+      else
+        echo "continuing with existing q-table"
+  fi
+  episode_number=$(wc -l < reward.txt)
+  echo "episode started from n="$episode_number
   while [ "True" = "True" ]; do
     echo "one_learning_episode_STARTED"
 #    source /opt/ros/humble/setup.bash
@@ -1300,10 +1324,27 @@ function qMotion() {
 #    gnome-terminal -- /bin/sh -c 'source /opt/ros/humble/setup.bash; export TURTLEBOT3_MODEL=burger; export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:`ros2 pkg prefix turtlebot3_gazebo `/share/turtlebot3_gazebo/models/; ros2 launch turtlebot3_gazebo cabinet.launch.py'
 
     OneEpisodeMotion
-    saveRewardToFile
+    if [ $total_episode_reward !=  "0" ]
+      then
+        saveRewardToFile
+    fi
+
     stop_gazebo
     #./close_terminals.sh
     echo "one_learning_episode_FINISHED"
+
+    c=($(cat commands.txt))
+    while [ $c = "pauseQ" ]; do
+      echo "Paused"
+      sleep 1
+      c=($(cat commands.txt))
+      if [ $c = "continueQ" ]
+        then
+          break
+      fi
+    done
+
+
     checkTotalReward
     if [ $TotalRewardBiggerThanMax = "True" ]
       then
