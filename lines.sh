@@ -6,7 +6,7 @@ simualtion_area="cabinet"
 #cabinet begin
 targetX="4"
 targetY="3"
-max_number_of_steps_per_episode=8
+max_number_of_steps_per_episode=5
 max_episodes_number=2
 #cabinet end
 
@@ -527,8 +527,9 @@ function movingFront2() {
   #x: = 0.85 - не огибает, слишком медленно
 
     #x: = 1.59, 1.0, 0.94, 0.85, 0.75 - не огибает, слишком быстро
+    # x=0.65 - врезается, 0.55- слишком медленно
 
-  ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.65, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+  ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.6, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
   #sleep 2
   while [ "moving" = "$moving" ]; do
 
@@ -835,18 +836,17 @@ function additionalTurning() {
       then ##ROLLING MINUS
         echo "Additional turning minus"
         ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: -0.01}}'
-    fi
+      else
     ###############check close distance in front###end
-
-
-    i=$(ros2 topic echo --once /scan -f)
-    distanceAngle=($(python3 getDistanceFromAngle.py $i $((360-$ZAPAS_PO_UGLU))))
-    tempDif=($(python3 diffF1_F2.py $distanceAngle $openFreeDistance))
-    bigger1=($(python3 biggerThanZero.py $tempDif))
-    if [ "False" = "$bigger1" ]
-      then ##ROLLING PlUS
-        echo "Additional turning plus"
-        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.01}}'
+        i=$(ros2 topic echo --once /scan -f)
+        distanceAngle=($(python3 getDistanceFromAngle.py $i $((360-$ZAPAS_PO_UGLU))))
+        tempDif=($(python3 diffF1_F2.py $distanceAngle $openFreeDistance))
+        bigger1=($(python3 biggerThanZero.py $tempDif))
+        if [ "False" = "$bigger1" ]
+          then ##ROLLING PlUS
+            echo "Additional turning plus"
+            ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.01}}'
+        fi
     fi
     echo "bigger0="$bigger0" bigger1="$bigger1
   done
@@ -1206,7 +1206,7 @@ function OneEpisodeMotion() {
   while [ "True" = "True" ]; do
     echo "step_started"
     i=$(ros2 topic echo --once /scan -f)
-    close=($(python3 getClosestAngleDist.py $i "0.91"))
+    close=($(python3 getClosestAngleDist.py $i "1.5"))
     side=${close[-1]}
     angle=${close[-2]}
     echo "side="$side
@@ -1263,9 +1263,15 @@ function OneEpisodeMotion() {
 #qtableUpdated=($(python3 update_qtable.py $Xcurr $Ycurr $Xprev $Yprev $motionVariant))
 #echo ${qtableUpdated[0]}" "${qtableUpdated[1]}" "${qtableUpdated[2]}" "${qtableUpdated[3]}" "${qtableUpdated[4]}" "${qtableUpdated[5]}" "${qtableUpdated[6]}" "${qtableUpdated[7]}" "${qtableUpdated[8]}" "${qtableUpdated[9]}" "${qtableUpdated[10]}" "${qtableUpdated[11]}" "${qtableUpdated[12]}" "
 
+function saveRewardToFile() {
+  total_episode_reward=($(python3 getTotalEpisodeReward.py))
+  echo $total_episode_reward >> reward.txt
+}
+
 function qMotion() {
   text=($(python3 random_q_table.py))
   echo $text
+  > reward.txt
   episode_number=0
   while [ "True" = "True" ]; do
     echo "one_learning_episode_STARTED"
@@ -1279,6 +1285,7 @@ function qMotion() {
 #    gnome-terminal -- /bin/sh -c 'source /opt/ros/humble/setup.bash; export TURTLEBOT3_MODEL=burger; export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:`ros2 pkg prefix turtlebot3_gazebo `/share/turtlebot3_gazebo/models/; ros2 launch turtlebot3_gazebo cabinet.launch.py'
 
     OneEpisodeMotion
+    saveRewardToFile
     stop_gazebo
     #./close_terminals.sh
     echo "one_learning_episode_FINISHED"
@@ -1302,7 +1309,16 @@ function qMotion() {
 
 }
 
-qMotion
+#qMotion
+vfhMotion
+vfhMotionhh
+bugMotionLeftSide
+bugMotionLeftSide
+bugMotionLeftSide
+bugMotionLeftSide
+bugMotionLeftSide
+bugMotionLeftSide
+
 #i=$(ros2 topic echo --once /scan -f)
 #distanceAngle=($(python3 getClosestAngleDist.py $i "0"))
 #echo "before motion distance on angle 0="$distanceAngle
