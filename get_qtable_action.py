@@ -7,8 +7,8 @@ import numpy
 import random
 
 if __name__ == '__main__':
-    x_target = 1.0 # float(sys.argv[1])
-    y_target = 1.0 # float(sys.argv[2])
+    x_target = float(sys.argv[1])
+    y_target = float(sys.argv[2])
     Xmin=global_values.Xmin
     Xmax = global_values.Xmax
     Ymin= global_values.Ymin
