@@ -7,3 +7,8 @@ xterm
 gnome-terminal
 ros2 humble
 set bash to default terminal shell
+$ go install github.com/ipfs/ipget@latest
+https://dist.ipfs.tech/#ipget
+
+pip install xmltodict
+pip install dicttoxml

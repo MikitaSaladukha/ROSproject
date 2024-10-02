@@ -1290,6 +1290,47 @@ function saveRewardToFile() {
 function clearRewardFile() {
     > reward.txt
 }
+access_token=""
+CID=""
+CID_prev=""
+function save_to_blockchain() {
+    CID=""
+    access_token=($(cat access_token.txt))
+    ipfs pin remote service add IPFSservice https://api.4everland.dev $access_token
+    while [ "$CID" = "" ]; do
+      CID=($(ipfs add qtable.json))
+    done
+    CID=${CID[1]}
+    echo "CID before adding="$CID
+    adding=""
+    while [ "$adding" = "" ]; do
+      adding=($(ipfs pin remote add --service=IPFSservice --name=qtable $CID))
+    done
+    CID_prev=$CID
+    echo $CID_prev
+    echo "adding="$adding
+    ipfs pin add $CID_prev
+}
+
+function get_from_blockchain() {
+  > downloaded_qtable
+  while [ "True" = "True" ]; do
+    if [ -s downloaded_qtable ]
+      then
+          break
+      else
+          echo "CID_prev="$CID_prev
+          ipfs get $CID_prev -o downloaded_qtable
+#          ipfs files rm /downloaded_qtable
+#          ipfs files cp /ipfs/$CID_prev /downloaded_qtable
+#          ipfs cat /ipfs/$CID_prev > downloaded_qtable
+          qtable=($(cat downloaded_qtable))
+    fi
+  done
+  $qtable > qtable.json
+  ipfs pin remote rm --service=IPFSservice --name=qtable
+  echo $qtable
+}
 
 function qMotion() {
   echo "null" > commands.txt
@@ -1372,5 +1413,6 @@ function qMotion() {
 
 
 }
-
-qMotion
+save_to_blockchain
+#get_from_blockchain
+#qMotion
