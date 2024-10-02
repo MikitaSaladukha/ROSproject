@@ -2,13 +2,13 @@ from random import random
 
 import global_values
 import sys
-import json
+import xmltodict
 import numpy
 import random
 
 if __name__ == '__main__':
-    x_target = float(sys.argv[1])
-    y_target = float(sys.argv[2])
+    x_target = 1.0 # float(sys.argv[1])
+    y_target = 1.0 # float(sys.argv[2])
     Xmin=global_values.Xmin
     Xmax = global_values.Xmax
     Ymin= global_values.Ymin
@@ -34,13 +34,15 @@ if __name__ == '__main__':
 
     # print(resultX)
     # print(resultY)
-    with open('qtable.json') as f:
-        d = json.load(f)
+    xml = open('qtable.xml', "r")
+    org_xml = xml.read()
+    dict_xml = xmltodict.parse(org_xml, process_namespaces=True)
+    d = dict_xml['root']
 
-    vfh_action_reward=d[str(resultX)][str(resultY)]["vfh"]
-    bug_left_action_reward=d[str(resultX)][str(resultY)]["bug_left"]
-    bug_right_action_reward=d[str(resultX)][str(resultY)]["bug_right"]
-    max=max(bug_left_action_reward,bug_right_action_reward, vfh_action_reward)
+    vfh_action_reward=float(d[str(resultX).replace("[","l").replace("]","r").replace(",","c").replace(" ","s")][str(resultY).replace("[","l").replace("]","r").replace(",","c").replace(" ","s")]["vfh"])
+    bug_left_action_reward=float(d[str(resultX).replace("[","l").replace("]","r").replace(",","c").replace(" ","s")][str(resultY).replace("[","l").replace("]","r").replace(",","c").replace(" ","s")]["bug_left"])
+    bug_right_action_reward=float(d[str(resultX).replace("[","l").replace("]","r").replace(",","c").replace(" ","s")][str(resultY).replace("[","l").replace("]","r").replace(",","c").replace(" ","s")]["bug_right"])
+    max=float(max(bug_left_action_reward,bug_right_action_reward, vfh_action_reward))
     randomMove=False
 
     if (numpy.random.rand() < global_values.epsilon):

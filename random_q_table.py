@@ -1,4 +1,4 @@
-import json
+import xmltodict
 import random
 import global_values
 
@@ -18,24 +18,24 @@ def generate_random_q_table():
     future_jsonY = {}
 
     while x < Xmax:
-        arrayX.append([float(x), float(x + stepX)])
+        arrayX.append(str([float(x), float(x + stepX)]).replace("[","l").replace("]","r").replace(",","c").replace(" ","s"))
         while y < Ymax:
-            arrayY.append([float(y), float(y + stepY)])
+            arrayY.append(str([float(y), float(y + stepY)]).replace("[","l").replace("]","r").replace(",","c").replace(" ","s"))
             if ((global_values.Xtarget >= x) and (global_values.Ytarget >= y) and (global_values.Xtarget <= x +stepX) and (global_values.Ytarget <= y +stepY)):
 
-                future_jsonY.update({str(arrayY[len(arrayY) - 1]):
+                future_jsonY.update({str(arrayY[len(arrayY) - 1]).replace("[","l").replace("]","r").replace(",","c").replace(" ","s"):
                                          {"vfh": 10.0,
                                           "bug_left": 10.0,
                                           "bug_right": 10.0}})
             else:
-                future_jsonY.update({str(arrayY[len(arrayY) - 1]):
+                future_jsonY.update({str(arrayY[len(arrayY) - 1]).replace("[","l").replace("]","r").replace(",","c").replace(" ","s"):
                                      {"vfh": 1.1,
                                       "bug_left": 1.00001,
                                       "bug_right": float(random.random())
                                       }})
             y = y + stepY
 
-        future_jsonX.update({str(arrayX[len(arrayX) - 1]): future_jsonY})
+        future_jsonX.update({str(arrayX[len(arrayX) - 1]).replace("[","l").replace("]","r").replace(",","c").replace(" ","s"): future_jsonY})
         x = x + stepX
         y = Ymin
         future_jsonY={}
@@ -47,8 +47,14 @@ def generate_random_q_table():
     # print(temp2)
     # print(temp2.get(str([0.0, 1.0])).get(str([0.0, 1.0])).get('vfh'))  # получаем значение по ключу
 
-    with open('qtable.json', 'w') as f:
-        json.dump(future_jsonX, f, ensure_ascii=False)
+    future_xml = {'root': future_jsonX}
+
+    out = xmltodict.unparse(future_xml, pretty=True)
+
+    open("qtable.xml", "w").close()
+    with open("qtable.xml", 'w') as file:
+        file.write(out)
+
 
     print("Random_q_table_generated")
     # newQreward = 145.678

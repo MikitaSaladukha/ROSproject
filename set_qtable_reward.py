@@ -1,6 +1,6 @@
 import global_values
 import sys
-import json
+import xmltodict
 import random_q_table
 
 if __name__ == '__main__':
@@ -39,9 +39,19 @@ if __name__ == '__main__':
 
     print(resultX)
     print(resultY)
-    with open('qtable.json') as f:
-        d = json.load(f)
-    d[str(resultX)][str(resultY)][action_target]=newQreward
 
-    with open('qtable.json', 'w') as f:
-        json.dump(d, f, ensure_ascii=False)
+    xml = open('qtable.xml', "r")
+    org_xml = xml.read()
+    dict_xml = xmltodict.parse(org_xml, process_namespaces=True)
+    d=dict_xml['root']
+
+    d[str(resultX).replace("[","l").replace("]","r").replace(",","c").replace(" ","s")][str(resultY).replace("[","l").replace("]","r").replace(",","c").replace(" ","s")][action_target]=newQreward
+
+
+    future_xml = {'root': d}
+
+    out = xmltodict.unparse(future_xml, pretty=True)
+    open("qtable.xml", "w").close()
+    with open("qtable.xml", 'w') as file:
+        file.write(out)
+
