@@ -1327,8 +1327,8 @@ function get_from_blockchain() {
           qtable=($(cat downloaded_qtable))
     fi
   done
-  $qtable > qtable.json
-  ipfs pin remote rm --service=IPFSservice --name=qtable
+  $(echo $qtable) > qtable.json
+  ipfs pin remote rm --service=IPFSservice --name=qtable --force
   echo $qtable
 }
 
