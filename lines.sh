@@ -1160,21 +1160,16 @@ function bugMotionRightSide() {
   bugMotion
 }
 
-#archMotion
-#archMotion2
 
-#archMotion3
-
-#vfhMotion
-#vfhMotion
-#bugMotionLeftSide
-#bugMotionRightSide
 total_episode_reward="0"
 function motionAccordingToQtable() {
   i=$(ros2 topic echo --once /odom)
   XYcurrent=($(python3 getCurrXY.py $i))
   Xprev=${XYcurrent[0]};
   Yprev=${XYcurrent[1]};
+
+#  get_from_blockchain
+
   motionVariant=($(python3 get_qtable_action.py $Xprev $Yprev))
   echo $motionVariant
   if [ "vfh" = "$motionVariant" ]
@@ -1198,6 +1193,8 @@ function motionAccordingToQtable() {
   echo ${qtableUpdated[0]}" "${qtableUpdated[1]}" "${qtableUpdated[2]}" "${qtableUpdated[3]}" "${qtableUpdated[4]}" "${qtableUpdated[5]}" "${qtableUpdated[6]}" "${qtableUpdated[7]}" "${qtableUpdated[8]}" "${qtableUpdated[9]}" "${qtableUpdated[10]}" "${qtableUpdated[11]}" "${qtableUpdated[12]}" "
 
   total_episode_reward=($(python3 summValuesFloat.py ${qtableUpdated[12]} $total_episode_reward))
+
+#  save_to_blockchain
 }
 
 
@@ -1271,9 +1268,6 @@ function OneEpisodeMotion() {
 #Ycurr="2.1"
 #Xprev="-3.1"
 #Yprev="-4.5"
-#
-#qtableUpdated=($(python3 update_qtable.py $Xcurr $Ycurr $Xprev $Yprev $motionVariant))
-#echo ${qtableUpdated[0]}" "${qtableUpdated[1]}" "${qtableUpdated[2]}" "${qtableUpdated[3]}" "${qtableUpdated[4]}" "${qtableUpdated[5]}" "${qtableUpdated[6]}" "${qtableUpdated[7]}" "${qtableUpdated[8]}" "${qtableUpdated[9]}" "${qtableUpdated[10]}" "${qtableUpdated[11]}" "${qtableUpdated[12]}" "
 
 TotalRewardBiggerThanMax="False"
 
@@ -1303,33 +1297,34 @@ function save_to_blockchain() {
     CID=${CID[1]}
     echo "CID before adding="$CID
     adding=""
+    adding=($(ipfs pin remote add --service=IPFSservice --name=qtable $CID))
     while [ "$adding" = "" ]; do
-      adding=($(ipfs pin remote add --service=IPFSservice --name=qtable $CID))
+      sleep 1
     done
     CID_prev=$CID
     echo $CID_prev
-    echo "adding="$adding
+    echo "saving to blockchain OK; adding="$adding
     ipfs pin add $CID_prev
 }
 
 function get_from_blockchain() {
-  > downloaded_qtable
-  while [ "True" = "True" ]; do
-    if [ -s downloaded_qtable ]
-      then
-          break
-      else
-          echo "CID_prev="$CID_prev
-          ipfs get $CID_prev -o downloaded_qtable
-#          ipfs files rm /downloaded_qtable
-#          ipfs files cp /ipfs/$CID_prev /downloaded_qtable
-#          ipfs cat /ipfs/$CID_prev > downloaded_qtable
-          qtable=($(cat downloaded_qtable))
-    fi
-  done
-  $(echo $qtable) > qtable.json
-  ipfs pin remote rm --service=IPFSservice --name=qtable --force
-  echo $qtable
+  if [ "$CID_prev" != "" ]
+    then
+      ipfs get $CID_prev -o qtable.json
+      while [ "True" = "True" ]; do
+        if [ -s qtable.json ]
+          then
+              break
+          else
+              echo "saving from blockchain CID_prev="$CID_prev
+              sleep 1
+        fi
+      done
+      ipfs pin remote rm --service=IPFSservice --name=qtable --force
+      echo "loaded qtable.json from blockchain"
+    else
+      echo "CID is not set"
+  fi
 }
 
 function qMotion() {
@@ -1413,6 +1408,8 @@ function qMotion() {
 
 
 }
-save_to_blockchain
-#get_from_blockchain
+text=($(python3 random_q_table.py))
+echo $text
+#save_to_blockchain
+get_from_blockchain
 #qMotion

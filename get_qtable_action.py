@@ -37,10 +37,10 @@ if __name__ == '__main__':
     with open('qtable.json') as f:
         d = json.load(f)
 
-    vfh_action_reward=d[str(resultX)][str(resultY)]["vfh"]
-    bug_left_action_reward=d[str(resultX)][str(resultY)]["bug_left"]
-    bug_right_action_reward=d[str(resultX)][str(resultY)]["bug_right"]
-    max=max(bug_left_action_reward,bug_right_action_reward, vfh_action_reward)
+    vfh_action_reward=float(d[str(resultX)][str(resultY)]["vfh"])
+    bug_left_action_reward=float(d[str(resultX)][str(resultY)]["bug_left"])
+    bug_right_action_reward=float(d[str(resultX)][str(resultY)]["bug_right"])
+    max=float(max(bug_left_action_reward,bug_right_action_reward, vfh_action_reward))
     randomMove=False
 
     if (numpy.random.rand() < global_values.epsilon):

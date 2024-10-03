@@ -38,17 +38,17 @@ if __name__ == '__main__':
         d = json.load(f)
 
 
-    vfh_action_reward=d[str(xyCurrent[0])][str(xyCurrent[1])]["vfh"]
-    bug_left_action_reward=d[str(xyCurrent[0])][str(xyCurrent[1])]["bug_left"]
-    bug_right_action_reward=d[str(xyCurrent[0])][str(xyCurrent[1])]["bug_right"]
-    max_reward_from_current=max(bug_left_action_reward,bug_right_action_reward, vfh_action_reward)
+    vfh_action_reward=float(d[str(xyCurrent[0])][str(xyCurrent[1])]["vfh"])
+    bug_left_action_reward=float(d[str(xyCurrent[0])][str(xyCurrent[1])]["bug_left"])
+    bug_right_action_reward=float(d[str(xyCurrent[0])][str(xyCurrent[1])]["bug_right"])
+    max_reward_from_current=float(max(bug_left_action_reward,bug_right_action_reward, vfh_action_reward))
 
     if abs(x_current-global_values.Xtarget) < 0.25 and abs(y_current-global_values.Ytarget) < 0.25:
         reward=100
     else:
         reward=global_values.immediate_reward
 
-    d[str(xyPrevious[0])][str(xyPrevious[1])][action_previous]=(1 - global_values.alpha) * d[str(xyPrevious[0])][str(xyPrevious[1])][action_previous] + global_values.alpha * (reward + global_values.gamma * max_reward_from_current)
+    d[str(xyPrevious[0])][str(xyPrevious[1])][action_previous]=(1 - global_values.alpha) * float(d[str(xyPrevious[0])][str(xyPrevious[1])][action_previous]) + global_values.alpha * (reward + global_values.gamma * max_reward_from_current)
     global_values.total_episode_reward += d[str(xyPrevious[0])][str(xyPrevious[1])][action_previous]
 
     with open('qtable.json', 'w') as f:
