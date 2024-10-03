@@ -1408,8 +1408,8 @@ function qMotion() {
 
 
 }
-text=($(python3 random_q_table.py))
-echo $text
+#text=($(python3 random_q_table.py))
+#echo $text
 #save_to_blockchain
-get_from_blockchain
-#qMotion
+#get_from_blockchain
+qMotion
