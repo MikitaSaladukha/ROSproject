@@ -4,7 +4,7 @@ source /opt/ros/humble/setup.bash
 simualtion_area="cabinet"
 
 #cabinet begin
-targetX="4"
+targetX="3"
 targetY="3"
 max_number_of_steps_per_episode=50
 max_episodes_number=100
@@ -1072,6 +1072,7 @@ function archMotion3() {
 
 firstCheck="false"
 function bugMotion() {
+
         #side="left_side"
         firstCheck="false"
         zeroCheck="false"
@@ -1152,14 +1153,29 @@ function bugMotion() {
 }
 function bugMotionLeftSide() {
   side="left_side"
-  bugMotion
+  bugMotionQ_vfh
 }
 
 function bugMotionRightSide() {
   side="right_side"
-  bugMotion
+  bugMotionQ_vfh
 }
 
+function bugMotionQ_vfh() {
+    i=$(ros2 topic echo --once /scan -f)
+    close_t=($(python3 getClosestAngleDist.py $i "0.93"))
+    sideTemp=${close_t[-1]}
+    angle=${close_t[-2]}
+    echo "sideTemp="$sideTemp
+    if [ $sideTemp == "none" ]
+        then
+          motionVariant="vfh"
+          vfhMotion
+        else
+          bugMotion
+    fi
+
+}
 
 total_episode_reward="0"
 function motionAccordingToQtable() {
@@ -1206,20 +1222,21 @@ function OneEpisodeMotion() {
   step_number=0
   while [ "True" = "True" ]; do
     echo "step_started"
-    i=$(ros2 topic echo --once /scan -f)
-    close=($(python3 getClosestAngleDist.py $i "0.93"))
-    side=${close[-1]}
-    angle=${close[-2]}
-    echo "side="$side
+#    i=$(ros2 topic echo --once /scan -f)
+#    close=($(python3 getClosestAngleDist.py $i "2.93"))
+#    side=${close[-1]}
+#    angle=${close[-2]}
+#    echo "side="$side
 
 
-    if [ $side == "none" ]
-        then
-          vfhMotion
-        else
-          motionAccordingToQtable
-    fi
+#    if [ $side == "none" ]
+#        then
+#          vfhMotion
+#        else
+#          motionAccordingToQtable
+#    fi
 
+    motionAccordingToQtable
     c=($(cat commands.txt))
     if [ $c = "pauseQ" ]
       then
@@ -1257,13 +1274,14 @@ function OneEpisodeMotion() {
     fi
     echo "goal check DONE"
 
+    echo "step_finished"
   done
 
   echo "one_learning_episode_FINISHED"
 
 
 }
-#motionVariant="bug_left"
+motionVariant="vfh"
 #Xcurr="1.1"
 #Ycurr="2.1"
 #Xprev="-3.1"
