@@ -32,7 +32,7 @@ echo ${set_global[0]}" "${set_global[1]}" "${set_global[2]}" "${set_global[3]}" 
 function stop_gazebo(){
   killall -9 gazebo & killall -9 gzserver  & killall -9 gzclient
   #pgrep bash | xargs -r -n1 pstree -p -c | grep -v \- | grep -o '[0-9]\+' | xargs -r kill
-
+  sleep 7
   ./close_terminals.sh
 
 
@@ -197,6 +197,9 @@ function moveToTargetWithStop() {
     echo "goal check DONE"
 
     i=$(ros2 topic echo --once /scan -f)
+    while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+      i=$(ros2 topic echo --once /scan -f)
+    done
     close=($(python3 getClosestAngleDist.py $i $closeDistance))
     side=${close[-1]}
     angle=${close[-2]}
@@ -221,6 +224,9 @@ function moveToTargetWithStop() {
     fi
 
     i=$(ros2 topic echo --once /scan -f)
+    while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+      i=$(ros2 topic echo --once /scan -f)
+    done
     close=($(python3 getClosestAngleDist.py $i $closeDistance))
     side=${close[-1]}
     angle=${close[-2]}
@@ -257,6 +263,9 @@ function moveToTargetWithStop() {
     echo "goal check DONE"
 
     i=$(ros2 topic echo --once /scan -f)
+    while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+      i=$(ros2 topic echo --once /scan -f)
+    done
     close=($(python3 getClosestAngleDist.py $i $closeDistance))
     side=${close[-1]}
     angle=${close[-2]}
@@ -302,6 +311,9 @@ function rollingForOrtogonal() {
   echo "after start of rollingForOrtogonal: side="$side
   while [ "good" != "$command" ]; do
     i=$(ros2 topic echo --once /scan -f)
+    while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+      i=$(ros2 topic echo --once /scan -f)
+    done
     command1=($(python3 rollingForOrtogonal.py $i $side))
     #echo "command1="$command1
     command=${command1[-1]}
@@ -343,6 +355,9 @@ function movingFront() {
 
     ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.03, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
     i=$(ros2 topic echo --once /scan -f)
+    while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+      i=$(ros2 topic echo --once /scan -f)
+    done
     moving=($(python3 movingFront.py $i $side "0.27" "0.37"))
 
     echo "moving="$moving
@@ -465,6 +480,9 @@ function rollingForEdgeOfObstacle() {
   side=$1
   while [ "good" != "$command" ]; do
     i=$(ros2 topic echo --once /scan -f)
+    while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+      i=$(ros2 topic echo --once /scan -f)
+    done
     command1=($(python3 rollingForEdge.py $i $side))
     #echo "command1="$command1
     command=${command1[-1]}
@@ -562,6 +580,10 @@ function movingFront2() {
 
 
     i=$(ros2 topic echo --once /scan -f)
+    while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+      i=$(ros2 topic echo --once /scan -f)
+    done
+
     moving=($(python3 movingFront.py $i $side "0.89" "0.97"))
 
     echo "moving="$moving
@@ -601,6 +623,9 @@ function archMotion2() {
       echo "angel_target="$angel_target
       echo "angle_current="$angle_current
       i=$(ros2 topic echo --once /scan -f)
+      while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+        i=$(ros2 topic echo --once /scan -f)
+      done
       close=($(python3 getCandidateAngleSector.py $i $angle_current $angel_target $closeDistance))
       numberOfCandidateSectors=${close[0]}
 
@@ -701,6 +726,10 @@ function archMotion2() {
 
     done
     i=$(ros2 topic echo --once /scan -f)
+    while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+      i=$(ros2 topic echo --once /scan -f)
+    done
+
     close=($(python3 getClosestAngleDist.py $i "3.5"))
     side=${close[-1]}
     time=($(python3 getTime.py))
@@ -795,6 +824,9 @@ function rollingForObstacleInFront() {
   command="rolling"
   while [ "good" != "$command" ]; do
     i=$(ros2 topic echo --once /scan -f)
+    while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+      i=$(ros2 topic echo --once /scan -f)
+    done
     command1=($(python3 rollingForObstacleInFront.py $i))
     #echo "command1="$command1
     command=${command1[-1]}
@@ -830,6 +862,9 @@ function additionalTurning() {
   while [ "False" = "$bigger1" -o "False" = "$bigger0" ]; do
     ###############check close distance in front###start
     i=$(ros2 topic echo --once /scan -f)
+    while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+      i=$(ros2 topic echo --once /scan -f)
+    done
     distanceAngle=($(python3 getDistanceFromAngle.py $i $ZAPAS_PO_UGLU))
     tempDif=($(python3 diffF1_F2.py $distanceAngle $openFreeDistance))
     bigger0=($(python3 biggerThanZero.py $tempDif))
@@ -840,6 +875,9 @@ function additionalTurning() {
       else
     ###############check close distance in front###end
         i=$(ros2 topic echo --once /scan -f)
+        while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+          i=$(ros2 topic echo --once /scan -f)
+        done
         distanceAngle=($(python3 getDistanceFromAngle.py $i $((360-$ZAPAS_PO_UGLU))))
         tempDif=($(python3 diffF1_F2.py $distanceAngle $openFreeDistance))
         bigger1=($(python3 biggerThanZero.py $tempDif))
@@ -864,6 +902,9 @@ function vfhMotion() {
     echo "angel_target="$angel_target
     echo "angle_current="$angle_current
     i=$(ros2 topic echo --once /scan -f)
+    while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+      i=$(ros2 topic echo --once /scan -f)
+    done
     close=($(python3 getCandidateAngleSector.py $i $angle_current $angel_target $closeDistance))
     numberOfCandidateSectors=${close[0]}
 
@@ -931,6 +972,9 @@ function vfhMotion() {
     while [ "true" = "true" ]; do
       ###############check close distance in front###start
       i=$(ros2 topic echo --once /scan -f)
+      while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+        i=$(ros2 topic echo --once /scan -f)
+      done
       distanceAngle=($(python3 getDistanceFromAngle.py $i "0"))
       tempDif=($(python3 diffF1_F2.py $distanceAngle $closeDistanceInFrontStop))
       bigger0=($(python3 biggerThanZero.py $tempDif))
@@ -985,6 +1029,9 @@ function vfhMotion() {
       echo "goal check DONE"
 
       i=$(ros2 topic echo --once /scan -f)
+      while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+        i=$(ros2 topic echo --once /scan -f)
+      done
       close=($(python3 getClosestAngleDist.py $i "3.6"))
       sideTemp=${close[-1]}
       angle=${close[-2]}
@@ -998,6 +1045,9 @@ function vfhMotion() {
 
       ###############check close distance in front###start
       i=$(ros2 topic echo --once /scan -f)
+      while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+        i=$(ros2 topic echo --once /scan -f)
+      done
       distanceAngle=($(python3 getDistanceFromAngle.py $i "0"))
       tempDif=($(python3 diffF1_F2.py $distanceAngle $closeDistanceInFrontStop))
       bigger0=($(python3 biggerThanZero.py $tempDif))
@@ -1019,6 +1069,9 @@ function vfhMotion() {
 
 
     i=$(ros2 topic echo --once /scan -f)
+    while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+      i=$(ros2 topic echo --once /scan -f)
+    done
     close=($(python3 getClosestAngleDist.py $i "3.6"))
     sideTemp=${close[-1]}
     angle=${close[-2]}
@@ -1163,6 +1216,9 @@ function bugMotionRightSide() {
 
 function bugMotionQ_vfh() {
     i=$(ros2 topic echo --once /scan -f)
+    while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+      i=$(ros2 topic echo --once /scan -f)
+    done
     close_t=($(python3 getClosestAngleDist.py $i "0.93"))
     sideTemp=${close_t[-1]}
     angle=${close_t[-2]}
@@ -1430,4 +1486,6 @@ function qMotion() {
 #echo $text
 #save_to_blockchain
 #get_from_blockchain
+
 qMotion
+#stop_gazebo
