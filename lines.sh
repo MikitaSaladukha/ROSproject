@@ -1513,12 +1513,5 @@ function qMotion() {
 #save_to_blockchain
 #get_from_blockchain
 
-#qMotion
-vfhMotion
-vfhMotion
-vfhMotion
-vfhMotion
-vfhMotion
-vfhMotion
-vfhMotion
+qMotion
 #stop_gazebo
