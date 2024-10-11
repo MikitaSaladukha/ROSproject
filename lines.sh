@@ -859,6 +859,20 @@ function additionalTurning() {
   echo "additionalTurning started"
   bigger0="False"
   bigger1="False"
+  i=$(ros2 topic echo --once /scan -f)
+  while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+    i=$(ros2 topic echo --once /scan -f)
+  done
+  distanceAngle=($(python3 getDistanceFromAngle.py $i $ZAPAS_PO_UGLU))
+  distanceAngle2=($(python3 getDistanceFromAngle.py $i $((360-$ZAPAS_PO_UGLU))))
+  diffDistance=($(python3 diffF1_F2.py $distanceAngle $distanceAngle2))
+  dist_biggerthan2=($(python3 biggerThanZero.py $diffDistance))
+  if [ "True" = "$dist_biggerthan2" ]
+      then ##ROLLING MINUS
+        bigger0="True"
+      else
+        bigger1="True"
+  fi
   while [ "False" = "$bigger1" -o "False" = "$bigger0" ]; do
     ###############check close distance in front###start
     i=$(ros2 topic echo --once /scan -f)
@@ -868,6 +882,12 @@ function additionalTurning() {
     distanceAngle=($(python3 getDistanceFromAngle.py $i $ZAPAS_PO_UGLU))
     tempDif=($(python3 diffF1_F2.py $distanceAngle $openFreeDistance))
     bigger0=($(python3 biggerThanZero.py $tempDif))
+    if [ "True" = "$dist_biggerthan2" ]
+      then ##ROLLING MINUS
+        bigger0="True"
+      else
+        bigger1="True"
+    fi
     if [ "False" = "$bigger0" ]
       then ##ROLLING MINUS
         echo "Additional turning minus"
@@ -878,9 +898,15 @@ function additionalTurning() {
         while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
           i=$(ros2 topic echo --once /scan -f)
         done
-        distanceAngle=($(python3 getDistanceFromAngle.py $i $((360-$ZAPAS_PO_UGLU))))
-        tempDif=($(python3 diffF1_F2.py $distanceAngle $openFreeDistance))
+        distanceAngle2=($(python3 getDistanceFromAngle.py $i $((360-$ZAPAS_PO_UGLU))))
+        tempDif=($(python3 diffF1_F2.py $distanceAngle2 $openFreeDistance))
         bigger1=($(python3 biggerThanZero.py $tempDif))
+        if [ "True" = "$dist_biggerthan2" ]
+          then ##ROLLING MINUS
+            bigger0="True"
+          else
+            bigger1="True"
+        fi
         if [ "False" = "$bigger1" ]
           then ##ROLLING PlUS
             echo "Additional turning plus"
@@ -1487,5 +1513,12 @@ function qMotion() {
 #save_to_blockchain
 #get_from_blockchain
 
-qMotion
+#qMotion
+vfhMotion
+vfhMotion
+vfhMotion
+vfhMotion
+vfhMotion
+vfhMotion
+vfhMotion
 #stop_gazebo
