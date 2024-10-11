@@ -1219,7 +1219,7 @@ function bugMotionQ_vfh() {
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
     done
-    close_t=($(python3 getClosestAngleDist.py $i "1.15")) #было 0.93
+    close_t=($(python3 getClosestAngleDist.py $i "1.31")) #было 0.93
     sideTemp=${close_t[-1]}
     angle=${close_t[-2]}
     echo "sideTemp="$sideTemp

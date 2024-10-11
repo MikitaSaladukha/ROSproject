@@ -91,6 +91,7 @@ def getTempTurnTargetDeltaAndRangeDistance(broadCandidateSectors,i,relative_targ
 if __name__ == '__main__':
     delta = 3.0  #delta for angles while turning
     inverse_obsltacle = False
+    motionToTargetWithoutChange=True
     broadth=0.0
     angle_current = float (sys.argv[-3])
     angle_target = float(sys.argv[-2])
@@ -122,6 +123,8 @@ if __name__ == '__main__':
         startedCandidateSector=False
         candidateSectors=[]
         for i in range(startingI, 720+startingI, 2):
+            if sys.argv[i]!='.inf' and (float(sys.argv[i]) < RForCandidate) and (abs(angle-relative_target_angle)<11):
+                motionToTargetWithoutChange=False
             # if angle>90 and angle<270:
             #     angle = angle + 1
             #     continue
@@ -263,7 +266,7 @@ if __name__ == '__main__':
             directionOfSector = temp_directionOfSector
 
     target=0
-    if math.fabs(turn_target_delta - relative_target_angle) <= 0.00000000001:
+    if (math.fabs(turn_target_delta - relative_target_angle) <= 0.00000000001) or motionToTargetWithoutChange:
         target = angle_target ## проверить сравнить углы
     else:
         target = angle_current + turn_target_delta+ directionOfSector*ZAPAS_PO_UGLU# + 7
