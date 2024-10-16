@@ -1514,4 +1514,12 @@ function qMotion() {
 #get_from_blockchain
 
 qMotion
+#Xcurr="1"
+#Ycurr="1"
+#Xprev="0"
+#Yprev="0"
+#motionVariant="vfh"
+#qtableUpdated=($(python3 update_qtable.py $Xcurr $Ycurr $Xprev $Yprev $motionVariant))
+#echo ${qtableUpdated[0]}" "${qtableUpdated[1]}" "${qtableUpdated[2]}" "${qtableUpdated[3]}" "${qtableUpdated[4]}" "${qtableUpdated[5]}" "${qtableUpdated[6]}" "${qtableUpdated[7]}" "${qtableUpdated[8]}" "${qtableUpdated[9]}" "${qtableUpdated[10]}" "${qtableUpdated[11]}" "${qtableUpdated[12]}" "
+#echo ${qtableUpdated[12]}
 #stop_gazebo
