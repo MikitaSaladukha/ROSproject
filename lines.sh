@@ -556,8 +556,12 @@ function movingFront2() {
   ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.6, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
   #sleep 2
   while [ "moving" = "$moving" ]; do
-
-     #x: = 0.65 - не огибает, слишком медленно
+    c=($(cat commands.txt))
+    if [ $c = "pauseQ" ]
+      then
+        break
+    fi
+    #x: = 0.65 - не огибает, слишком медленно
 
     #x: = 0.85,  0.8,0.72, 0.68, 0.13, 0.085, 0.05 - не огибает, слишком быстро
     ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.02, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
@@ -1180,6 +1184,11 @@ function bugMotion() {
             echo "movingFront2 START"
             movingFront2
             echo "movingFront2 DONE"
+            c=($(cat commands.txt))
+            if [ $c = "pauseQ" ]
+              then
+                break
+            fi
         ###########################################
             echo "check GOAL"
             i=$(ros2 topic echo --once /odom)
