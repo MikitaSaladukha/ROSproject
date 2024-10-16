@@ -333,6 +333,11 @@ function rollingForOrtogonal() {
         ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: -0.01}}'
 
     fi
+    c=($(cat commands.txt))
+    if [ $c = "pauseQ" ]
+      then
+        break
+    fi
   done
   echo "ended rollingForOrtogonal"
 
@@ -1165,6 +1170,11 @@ function bugMotion() {
         echo "rollingForOrtogonal START"
         rollingForOrtogonal $side
         echo "rollingForOrtogonal DONE"
+        c=($(cat commands.txt))
+        if [ $c = "pauseQ" ]
+          then
+            return
+        fi
         echo "L1="$L1
         while [ "True" = "True" ]; do
             echo "movingFront2 START"
@@ -1220,6 +1230,11 @@ function bugMotion() {
                 echo "rollingForOrtogonal START"
                 rollingForOrtogonal $side
                 echo "rollingForOrtogonal DONE"
+                c=($(cat commands.txt))
+                if [ $c = "pauseQ" ]
+                  then
+                    break
+                fi
                 firstCheck="true"
                 echo "firstCheck set to true"
 
@@ -1282,6 +1297,12 @@ function motionAccordingToQtable() {
     then
       bugMotionRightSide
   fi
+  c=($(cat commands.txt))
+  if [ $c = "pauseQ" ]
+    then
+      return
+  fi
+
   i=$(ros2 topic echo --once /odom)
   XYcurrent=($(python3 getCurrXY.py $i))
   Xcurr=${XYcurrent[0]};
