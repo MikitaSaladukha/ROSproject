@@ -1500,8 +1500,13 @@ function qMotion() {
     echo "one_learning_episode_FINISHED"
 
     c=($(cat commands.txt))
+    onceShowed="False"
     while [ $c = "pauseQ" ]; do
-      echo "Paused"
+      if [ $onceShowed = "False" ]
+        then
+          echo "Paused"
+          onceShowed="True"
+      fi
       sleep 1
       c=($(cat commands.txt))
       if [ $c = "continueQ" ]
