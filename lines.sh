@@ -37,7 +37,7 @@ function stop_gazebo(){
 
 
 }
-collision_distance="0.0005"
+collision_distance="0.12"
 #cubes cilinders begin
 #targetX="9"
 #targetY="0"
@@ -347,6 +347,7 @@ function rollingForOrtogonal() {
     close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) #restart if collision
     sideTemp=${close_t2[-1]}
     echo "sideTemp="$sideTemp
+    echo "closest dist"${close_t2[-4]}
     if [ "$sideTemp" != "none" ]
         then
           break
@@ -582,6 +583,7 @@ function movingFront2() {
     close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
     sideTemp=${close_t2[-1]}
     echo "sideTemp="$sideTemp
+    echo "closest dist"${close_t2[-4]}
     if [ "$sideTemp" != "none" ]
         then
           break
@@ -1212,6 +1214,7 @@ function bugMotion() {
         close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
         sideTemp=${close_t2[-1]}
         echo "sideTemp="$sideTemp
+        echo "closest dist"${close_t2[-4]}
         if [ "$sideTemp" != "none" ]
             then
               return
@@ -1234,6 +1237,7 @@ function bugMotion() {
             close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
             sideTemp=${close_t2[-1]}
             echo "sideTemp="$sideTemp
+            echo "closest dist"${close_t2[-4]}
             if [ "$sideTemp" != "none" ]
                 then
                   break
@@ -1301,6 +1305,7 @@ function bugMotion() {
                 close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
                 sideTemp=${close_t2[-1]}
                 echo "sideTemp="$sideTemp
+                echo "closest dist"${close_t2[-4]}
                 if [ "$sideTemp" != "none" ]
                     then
                       break
@@ -1380,6 +1385,7 @@ function motionAccordingToQtable() {
   close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
   sideTemp=${close_t2[-1]}
   echo "sideTemp="$sideTemp
+  echo "closest dist"${close_t2[-4]}
   if [ "$sideTemp" != "none" ]
       then
         return
@@ -1434,6 +1440,7 @@ function OneEpisodeMotion() {
     close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
     sideTemp=${close_t2[-1]}
     echo "sideTemp="$sideTemp
+    echo "closest dist"${close_t2[-4]}
     if [ "$sideTemp" != "none" ]
         then
           break
