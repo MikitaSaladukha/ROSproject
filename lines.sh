@@ -37,7 +37,7 @@ function stop_gazebo(){
 
 
 }
-
+collision_distance="0.0005"
 #cubes cilinders begin
 #targetX="9"
 #targetY="0"
@@ -338,6 +338,19 @@ function rollingForOrtogonal() {
       then
         break
     fi
+
+    i=$(ros2 topic echo --once /scan -f)
+    while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+      i=$(ros2 topic echo --once /scan -f)
+    done
+
+    close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) #restart if collision
+    sideTemp=${close_t2[-1]}
+    echo "sideTemp="$sideTemp
+    if [ "$sideTemp" != "none" ]
+        then
+          break
+    fi
   done
   echo "ended rollingForOrtogonal"
 
@@ -560,6 +573,18 @@ function movingFront2() {
     if [ $c = "pauseQ" ]
       then
         break
+    fi
+
+    i=$(ros2 topic echo --once /scan -f)
+    while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+      i=$(ros2 topic echo --once /scan -f)
+    done
+    close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
+    sideTemp=${close_t2[-1]}
+    echo "sideTemp="$sideTemp
+    if [ "$sideTemp" != "none" ]
+        then
+          break
     fi
     #x: = 0.65 - не огибает, слишком медленно
 
@@ -1179,6 +1204,18 @@ function bugMotion() {
           then
             return
         fi
+
+        i=$(ros2 topic echo --once /scan -f)
+        while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+          i=$(ros2 topic echo --once /scan -f)
+        done
+        close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
+        sideTemp=${close_t2[-1]}
+        echo "sideTemp="$sideTemp
+        if [ "$sideTemp" != "none" ]
+            then
+              return
+        fi
         echo "L1="$L1
         while [ "True" = "True" ]; do
             echo "movingFront2 START"
@@ -1188,6 +1225,18 @@ function bugMotion() {
             if [ $c = "pauseQ" ]
               then
                 break
+            fi
+
+            i=$(ros2 topic echo --once /scan -f)
+            while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+              i=$(ros2 topic echo --once /scan -f)
+            done
+            close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
+            sideTemp=${close_t2[-1]}
+            echo "sideTemp="$sideTemp
+            if [ "$sideTemp" != "none" ]
+                then
+                  break
             fi
         ###########################################
             echo "check GOAL"
@@ -1244,6 +1293,18 @@ function bugMotion() {
                   then
                     break
                 fi
+
+                i=$(ros2 topic echo --once /scan -f)
+                while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+                  i=$(ros2 topic echo --once /scan -f)
+                done
+                close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
+                sideTemp=${close_t2[-1]}
+                echo "sideTemp="$sideTemp
+                if [ "$sideTemp" != "none" ]
+                    then
+                      break
+                fi
                 firstCheck="true"
                 echo "firstCheck set to true"
 
@@ -1282,7 +1343,7 @@ function bugMotionQ_vfh() {
     fi
 
 }
-
+``
 total_episode_reward="0"
 function motionAccordingToQtable() {
   i=$(ros2 topic echo --once /odom)
@@ -1312,6 +1373,17 @@ function motionAccordingToQtable() {
       return
   fi
 
+  i=$(ros2 topic echo --once /scan -f)
+  while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+    i=$(ros2 topic echo --once /scan -f)
+  done
+  close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
+  sideTemp=${close_t2[-1]}
+  echo "sideTemp="$sideTemp
+  if [ "$sideTemp" != "none" ]
+      then
+        return
+  fi
   i=$(ros2 topic echo --once /odom)
   XYcurrent=($(python3 getCurrXY.py $i))
   Xcurr=${XYcurrent[0]};
@@ -1355,7 +1427,17 @@ function OneEpisodeMotion() {
         break
     fi
 
-
+    i=$(ros2 topic echo --once /scan -f)
+    while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+      i=$(ros2 topic echo --once /scan -f)
+    done
+    close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
+    sideTemp=${close_t2[-1]}
+    echo "sideTemp="$sideTemp
+    if [ "$sideTemp" != "none" ]
+        then
+          break
+    fi
     step_number=$(($step_number+1))
     if [ "$step_number" -ge "$max_number_of_steps_per_episode" ]
       then
