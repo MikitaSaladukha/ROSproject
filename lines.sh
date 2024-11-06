@@ -29,6 +29,8 @@ echo ${set_global[0]}" "${set_global[1]}" "${set_global[2]}" "${set_global[3]}" 
 #sleep 10
 #echo $(pwd)
 
+restart="False"
+
 function stop_gazebo(){
   killall -9 gazebo & killall -9 gzserver  & killall -9 gzclient
   #pgrep bash | xargs -r -n1 pstree -p -c | grep -v \- | grep -o '[0-9]\+' | xargs -r kill
@@ -196,9 +198,17 @@ function moveToTargetWithStop() {
     fi
     echo "goal check DONE"
 
+    restart_lag_counter=0
     i=$(ros2 topic echo --once /scan -f)
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
+      sleep 1
+      restart_lag_counter=$(($restart_lag_counter+1))
+      if [ "$restart_lag_counter" -ge 25 ]
+      then
+        restart="True"
+        break
+      fi
     done
     close=($(python3 getClosestAngleDist.py $i $closeDistance))
     side=${close[-1]}
@@ -223,9 +233,17 @@ function moveToTargetWithStop() {
         break
     fi
 
+    restart_lag_counter=0
     i=$(ros2 topic echo --once /scan -f)
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
+      sleep 1
+      restart_lag_counter=$(($restart_lag_counter+1))
+      if [ "$restart_lag_counter" -ge 25 ]
+      then
+        restart="True"
+        break
+      fi
     done
     close=($(python3 getClosestAngleDist.py $i $closeDistance))
     side=${close[-1]}
@@ -262,9 +280,17 @@ function moveToTargetWithStop() {
     fi
     echo "goal check DONE"
 
+    restart_lag_counter=0
     i=$(ros2 topic echo --once /scan -f)
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
+      sleep 1
+      restart_lag_counter=$(($restart_lag_counter+1))
+      if [ "$restart_lag_counter" -ge 25 ]
+      then
+        restart="True"
+        break
+      fi
     done
     close=($(python3 getClosestAngleDist.py $i $closeDistance))
     side=${close[-1]}
@@ -310,9 +336,17 @@ function rollingForOrtogonal() {
   side=$1
   echo "after start of rollingForOrtogonal: side="$side
   while [ "good" != "$command" ]; do
+    restart_lag_counter=0
     i=$(ros2 topic echo --once /scan -f)
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
+      sleep 1
+      restart_lag_counter=$(($restart_lag_counter+1))
+      if [ "$restart_lag_counter" -ge 25 ]
+      then
+        restart="True"
+        break
+      fi
     done
     command1=($(python3 rollingForOrtogonal.py $i $side))
     #echo "command1="$command1
@@ -339,11 +373,23 @@ function rollingForOrtogonal() {
         break
     fi
 
+    restart_lag_counter=0
     i=$(ros2 topic echo --once /scan -f)
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
+      sleep 1
+      restart_lag_counter=$(($restart_lag_counter+1))
+      if [ "$restart_lag_counter" -ge 25 ]
+      then
+        restart="True"
+        break
+      fi
     done
 
+    if [ "$restart" == "True" ]
+      then
+        break
+    fi
     close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) #restart if collision
     sideTemp=${close_t2[-1]}
     echo "sideTemp="$sideTemp
@@ -373,9 +419,17 @@ function movingFront() {
     fi
 
     ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.03, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+    restart_lag_counter=0
     i=$(ros2 topic echo --once /scan -f)
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
+      sleep 1
+      restart_lag_counter=$(($restart_lag_counter+1))
+      if [ "$restart_lag_counter" -ge 25 ]
+      then
+        restart="True"
+        break
+      fi
     done
     moving=($(python3 movingFront.py $i $side "0.27" "0.37"))
 
@@ -498,9 +552,17 @@ function rollingForEdgeOfObstacle() {
   command="rolling"
   side=$1
   while [ "good" != "$command" ]; do
+    restart_lag_counter=0
     i=$(ros2 topic echo --once /scan -f)
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
+      sleep 1
+      restart_lag_counter=$(($restart_lag_counter+1))
+      if [ "$restart_lag_counter" -ge 25 ]
+      then
+        restart="True"
+        break
+      fi
     done
     command1=($(python3 rollingForEdge.py $i $side))
     #echo "command1="$command1
@@ -576,10 +638,23 @@ function movingFront2() {
         break
     fi
 
+    restart_lag_counter=0
     i=$(ros2 topic echo --once /scan -f)
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
+      sleep 1
+      restart_lag_counter=$(($restart_lag_counter+1))
+      if [ "$restart_lag_counter" -ge 25 ]
+      then
+        restart="True"
+        break
+      fi
     done
+    if [ "$restart" == "True" ]
+      then
+        break
+    fi
+
     close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
     sideTemp=${close_t2[-1]}
     echo "sideTemp="$sideTemp
@@ -615,9 +690,17 @@ function movingFront2() {
 
 
 
+    restart_lag_counter=0
     i=$(ros2 topic echo --once /scan -f)
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
+      sleep 1
+      restart_lag_counter=$(($restart_lag_counter+1))
+      if [ "$restart_lag_counter" -ge 25 ]
+      then
+        restart="True"
+        break
+      fi
     done
 
     moving=($(python3 movingFront.py $i $side "0.89" "0.97"))
@@ -658,9 +741,17 @@ function archMotion2() {
       angle_current=${angle[-2]}
       echo "angel_target="$angel_target
       echo "angle_current="$angle_current
+      restart_lag_counter=0
       i=$(ros2 topic echo --once /scan -f)
       while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
         i=$(ros2 topic echo --once /scan -f)
+        sleep 1
+        restart_lag_counter=$(($restart_lag_counter+1))
+        if [ "$restart_lag_counter" -ge 25 ]
+        then
+          restart="True"
+          break
+        fi
       done
       close=($(python3 getCandidateAngleSector.py $i $angle_current $angel_target $closeDistance))
       numberOfCandidateSectors=${close[0]}
@@ -761,9 +852,17 @@ function archMotion2() {
 
 
     done
+    restart_lag_counter=0
     i=$(ros2 topic echo --once /scan -f)
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
+      sleep 1
+      restart_lag_counter=$(($restart_lag_counter+1))
+      if [ "$restart_lag_counter" -ge 25 ]
+      then
+        restart="True"
+        break
+      fi
     done
 
     close=($(python3 getClosestAngleDist.py $i "3.5"))
@@ -859,9 +958,17 @@ function rollingForObstacleInFront() {
   echo "started rollingForObstacleInFront"
   command="rolling"
   while [ "good" != "$command" ]; do
+    restart_lag_counter=0
     i=$(ros2 topic echo --once /scan -f)
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
+      sleep 1
+      restart_lag_counter=$(($restart_lag_counter+1))
+      if [ "$restart_lag_counter" -ge 25 ]
+      then
+        restart="True"
+        break
+      fi
     done
     command1=($(python3 rollingForObstacleInFront.py $i))
     #echo "command1="$command1
@@ -895,9 +1002,17 @@ function additionalTurning() {
   echo "additionalTurning started"
   bigger0="False"
   bigger1="False"
+  restart_lag_counter=0
   i=$(ros2 topic echo --once /scan -f)
   while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
     i=$(ros2 topic echo --once /scan -f)
+    sleep 1
+    restart_lag_counter=$(($restart_lag_counter+1))
+    if [ "$restart_lag_counter" -ge 25 ]
+    then
+      restart="True"
+      break
+    fi
   done
   distanceAngle=($(python3 getDistanceFromAngle.py $i $ZAPAS_PO_UGLU))
   distanceAngle2=($(python3 getDistanceFromAngle.py $i $((360-$ZAPAS_PO_UGLU))))
@@ -911,9 +1026,17 @@ function additionalTurning() {
   fi
   while [ "False" = "$bigger1" -o "False" = "$bigger0" ]; do
     ###############check close distance in front###start
+    restart_lag_counter=0
     i=$(ros2 topic echo --once /scan -f)
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
+      sleep 1
+      restart_lag_counter=$(($restart_lag_counter+1))
+      if [ "$restart_lag_counter" -ge 25 ]
+      then
+        restart="True"
+        break
+      fi
     done
     distanceAngle=($(python3 getDistanceFromAngle.py $i $ZAPAS_PO_UGLU))
     tempDif=($(python3 diffF1_F2.py $distanceAngle $openFreeDistance))
@@ -930,9 +1053,17 @@ function additionalTurning() {
         ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: -0.01}}'
       else
     ###############check close distance in front###end
+        restart_lag_counter=0
         i=$(ros2 topic echo --once /scan -f)
         while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
           i=$(ros2 topic echo --once /scan -f)
+          sleep 1
+          restart_lag_counter=$(($restart_lag_counter+1))
+          if [ "$restart_lag_counter" -ge 25 ]
+          then
+            restart="True"
+            break
+          fi
         done
         distanceAngle2=($(python3 getDistanceFromAngle.py $i $((360-$ZAPAS_PO_UGLU))))
         tempDif=($(python3 diffF1_F2.py $distanceAngle2 $openFreeDistance))
@@ -963,9 +1094,17 @@ function vfhMotion() {
     angle_current=${angle[-2]}
     echo "angel_target="$angel_target
     echo "angle_current="$angle_current
+    restart_lag_counter=0
     i=$(ros2 topic echo --once /scan -f)
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
+      sleep 1
+      restart_lag_counter=$(($restart_lag_counter+1))
+      if [ "$restart_lag_counter" -ge 25 ]
+      then
+        restart="True"
+        break
+      fi
     done
     close=($(python3 getCandidateAngleSector.py $i $angle_current $angel_target $closeDistance))
     numberOfCandidateSectors=${close[0]}
@@ -1033,9 +1172,17 @@ function vfhMotion() {
     ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.06, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
     while [ "true" = "true" ]; do
       ###############check close distance in front###start
+      restart_lag_counter=0
       i=$(ros2 topic echo --once /scan -f)
       while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
         i=$(ros2 topic echo --once /scan -f)
+        sleep 1
+        restart_lag_counter=$(($restart_lag_counter+1))
+        if [ "$restart_lag_counter" -ge 25 ]
+        then
+          restart="True"
+          break
+        fi
       done
       distanceAngle=($(python3 getDistanceFromAngle.py $i "0"))
       tempDif=($(python3 diffF1_F2.py $distanceAngle $closeDistanceInFrontStop))
@@ -1090,9 +1237,17 @@ function vfhMotion() {
       fi
       echo "goal check DONE"
 
+      restart_lag_counter=0
       i=$(ros2 topic echo --once /scan -f)
       while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
         i=$(ros2 topic echo --once /scan -f)
+        sleep 1
+        restart_lag_counter=$(($restart_lag_counter+1))
+        if [ "$restart_lag_counter" -ge 25 ]
+        then
+          restart="True"
+          break
+        fi
       done
       close=($(python3 getClosestAngleDist.py $i "3.6"))
       sideTemp=${close[-1]}
@@ -1106,9 +1261,17 @@ function vfhMotion() {
       echo "temporal vfh: side="$side
 
       ###############check close distance in front###start
+      restart_lag_counter=0
       i=$(ros2 topic echo --once /scan -f)
       while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
         i=$(ros2 topic echo --once /scan -f)
+        sleep 1
+        restart_lag_counter=$(($restart_lag_counter+1))
+        if [ "$restart_lag_counter" -ge 25 ]
+        then
+          restart="True"
+          break
+        fi
       done
       distanceAngle=($(python3 getDistanceFromAngle.py $i "0"))
       tempDif=($(python3 diffF1_F2.py $distanceAngle $closeDistanceInFrontStop))
@@ -1130,9 +1293,17 @@ function vfhMotion() {
 
 
 
+    restart_lag_counter=0
     i=$(ros2 topic echo --once /scan -f)
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
+      sleep 1
+      restart_lag_counter=$(($restart_lag_counter+1))
+      if [ "$restart_lag_counter" -ge 25 ]
+      then
+        restart="True"
+        break
+      fi
     done
     close=($(python3 getClosestAngleDist.py $i "3.6"))
     sideTemp=${close[-1]}
@@ -1207,10 +1378,23 @@ function bugMotion() {
             return
         fi
 
+        restart_lag_counter=0
         i=$(ros2 topic echo --once /scan -f)
         while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
           i=$(ros2 topic echo --once /scan -f)
+          sleep 1
+          restart_lag_counter=$(($restart_lag_counter+1))
+          if [ "$restart_lag_counter" -ge 25 ]
+          then
+            restart="True"
+            break
+          fi
         done
+
+        if [ "$restart" == "True" ]
+          then
+            return
+        fi
         close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
         sideTemp=${close_t2[-1]}
         echo "sideTemp="$sideTemp
@@ -1230,10 +1414,24 @@ function bugMotion() {
                 break
             fi
 
+            restart_lag_counter=0
             i=$(ros2 topic echo --once /scan -f)
             while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
               i=$(ros2 topic echo --once /scan -f)
+              sleep 1
+              restart_lag_counter=$(($restart_lag_counter+1))
+              if [ "$restart_lag_counter" -ge 25 ]
+              then
+                restart="True"
+                break
+              fi
             done
+
+            if [ "$restart" == "True" ]
+              then
+                break
+            fi
+
             close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
             sideTemp=${close_t2[-1]}
             echo "sideTemp="$sideTemp
@@ -1297,11 +1495,23 @@ function bugMotion() {
                   then
                     break
                 fi
-
+                restart_lag_counter=0
                 i=$(ros2 topic echo --once /scan -f)
                 while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
                   i=$(ros2 topic echo --once /scan -f)
+                  sleep 1
+                  restart_lag_counter=$(($restart_lag_counter+1))
+                  if [ "$restart_lag_counter" -ge 25 ]
+                  then
+                    restart="True"
+                    break
+                  fi
                 done
+
+                if [ "$restart" == "True" ]
+                  then
+                    break
+                fi
                 close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
                 sideTemp=${close_t2[-1]}
                 echo "sideTemp="$sideTemp
@@ -1331,9 +1541,17 @@ function bugMotionRightSide() {
 }
 
 function bugMotionQ_vfh() {
+    restart_lag_counter=0
     i=$(ros2 topic echo --once /scan -f)
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
+      sleep 1
+      restart_lag_counter=$(($restart_lag_counter+1))
+      if [ "$restart_lag_counter" -ge 25 ]
+      then
+        restart="True"
+        break
+      fi
     done
     close_t=($(python3 getClosestAngleDist.py $i "1.31")) #было 0.93
     sideTemp=${close_t[-1]}
@@ -1378,10 +1596,23 @@ function motionAccordingToQtable() {
       return
   fi
 
+  restart_lag_counter=0
   i=$(ros2 topic echo --once /scan -f)
   while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
     i=$(ros2 topic echo --once /scan -f)
+    sleep 1
+    restart_lag_counter=$(($restart_lag_counter+1))
+    if [ "$restart_lag_counter" -ge 25 ]
+    then
+      restart="True"
+      break
+    fi
   done
+
+  if [ "$restart" == "True" ]
+    then
+      return
+  fi
   close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
   sideTemp=${close_t2[-1]}
   echo "sideTemp="$sideTemp
@@ -1433,10 +1664,22 @@ function OneEpisodeMotion() {
         break
     fi
 
+    restart_lag_counter=0
     i=$(ros2 topic echo --once /scan -f)
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
+      sleep 1
+      restart_lag_counter=$(($restart_lag_counter+1))
+      if [ "$restart_lag_counter" -ge 25 ]
+      then
+        restart="True"
+        break
+      fi
     done
+    if [ "$restart" == "True" ]
+      then
+        break
+    fi
     close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
     sideTemp=${close_t2[-1]}
     echo "sideTemp="$sideTemp
@@ -1585,6 +1828,7 @@ function qMotion() {
     fi
 
     stop_gazebo
+    restart="False"
     #./close_terminals.sh
     echo "one_learning_episode_FINISHED"
 
