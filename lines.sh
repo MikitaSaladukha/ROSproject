@@ -204,7 +204,7 @@ function moveToTargetWithStop() {
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
       restart_lag_counter=$(($restart_lag_counter+1))
-      if [ "$restart_lag_counter" -ge 25 ]
+      if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
         break
@@ -239,7 +239,7 @@ function moveToTargetWithStop() {
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
       restart_lag_counter=$(($restart_lag_counter+1))
-      if [ "$restart_lag_counter" -ge 25 ]
+      if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
         break
@@ -286,7 +286,7 @@ function moveToTargetWithStop() {
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
       restart_lag_counter=$(($restart_lag_counter+1))
-      if [ "$restart_lag_counter" -ge 25 ]
+      if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
         break
@@ -342,7 +342,7 @@ function rollingForOrtogonal() {
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
       restart_lag_counter=$(($restart_lag_counter+1))
-      if [ "$restart_lag_counter" -ge 25 ]
+      if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
         break
@@ -379,7 +379,7 @@ function rollingForOrtogonal() {
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
       restart_lag_counter=$(($restart_lag_counter+1))
-      if [ "$restart_lag_counter" -ge 25 ]
+      if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
         break
@@ -425,7 +425,7 @@ function movingFront() {
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
       restart_lag_counter=$(($restart_lag_counter+1))
-      if [ "$restart_lag_counter" -ge 25 ]
+      if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
         break
@@ -558,7 +558,7 @@ function rollingForEdgeOfObstacle() {
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
       restart_lag_counter=$(($restart_lag_counter+1))
-      if [ "$restart_lag_counter" -ge 25 ]
+      if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
         break
@@ -644,7 +644,7 @@ function movingFront2() {
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
       restart_lag_counter=$(($restart_lag_counter+1))
-      if [ "$restart_lag_counter" -ge 25 ]
+      if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
         break
@@ -696,7 +696,7 @@ function movingFront2() {
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
       restart_lag_counter=$(($restart_lag_counter+1))
-      if [ "$restart_lag_counter" -ge 25 ]
+      if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
         break
@@ -747,7 +747,7 @@ function archMotion2() {
         i=$(ros2 topic echo --once /scan -f)
         sleep 1
         restart_lag_counter=$(($restart_lag_counter+1))
-        if [ "$restart_lag_counter" -ge 25 ]
+        if [ "$restart_lag_counter" -ge "25" ]
         then
           restart="True"
           break
@@ -858,7 +858,7 @@ function archMotion2() {
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
       restart_lag_counter=$(($restart_lag_counter+1))
-      if [ "$restart_lag_counter" -ge 25 ]
+      if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
         break
@@ -964,7 +964,7 @@ function rollingForObstacleInFront() {
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
       restart_lag_counter=$(($restart_lag_counter+1))
-      if [ "$restart_lag_counter" -ge 25 ]
+      if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
         break
@@ -1008,7 +1008,7 @@ function additionalTurning() {
     i=$(ros2 topic echo --once /scan -f)
     sleep 1
     restart_lag_counter=$(($restart_lag_counter+1))
-    if [ "$restart_lag_counter" -ge 25 ]
+    if [ "$restart_lag_counter" -ge "25" ]
     then
       restart="True"
       break
@@ -1032,7 +1032,7 @@ function additionalTurning() {
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
       restart_lag_counter=$(($restart_lag_counter+1))
-      if [ "$restart_lag_counter" -ge 25 ]
+      if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
         break
@@ -1059,7 +1059,7 @@ function additionalTurning() {
           i=$(ros2 topic echo --once /scan -f)
           sleep 1
           restart_lag_counter=$(($restart_lag_counter+1))
-          if [ "$restart_lag_counter" -ge 25 ]
+          if [ "$restart_lag_counter" -ge "25" ]
           then
             restart="True"
             break
@@ -1100,7 +1100,7 @@ function vfhMotion() {
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
       restart_lag_counter=$(($restart_lag_counter+1))
-      if [ "$restart_lag_counter" -ge 25 ]
+      if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
         break
@@ -1178,7 +1178,7 @@ function vfhMotion() {
         i=$(ros2 topic echo --once /scan -f)
         sleep 1
         restart_lag_counter=$(($restart_lag_counter+1))
-        if [ "$restart_lag_counter" -ge 25 ]
+        if [ "$restart_lag_counter" -ge "25" ]
         then
           restart="True"
           break
@@ -1243,7 +1243,7 @@ function vfhMotion() {
         i=$(ros2 topic echo --once /scan -f)
         sleep 1
         restart_lag_counter=$(($restart_lag_counter+1))
-        if [ "$restart_lag_counter" -ge 25 ]
+        if [ "$restart_lag_counter" -ge "25" ]
         then
           restart="True"
           break
@@ -1267,7 +1267,7 @@ function vfhMotion() {
         i=$(ros2 topic echo --once /scan -f)
         sleep 1
         restart_lag_counter=$(($restart_lag_counter+1))
-        if [ "$restart_lag_counter" -ge 25 ]
+        if [ "$restart_lag_counter" -ge "25" ]
         then
           restart="True"
           break
@@ -1299,7 +1299,7 @@ function vfhMotion() {
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
       restart_lag_counter=$(($restart_lag_counter+1))
-      if [ "$restart_lag_counter" -ge 25 ]
+      if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
         break
@@ -1384,7 +1384,7 @@ function bugMotion() {
           i=$(ros2 topic echo --once /scan -f)
           sleep 1
           restart_lag_counter=$(($restart_lag_counter+1))
-          if [ "$restart_lag_counter" -ge 25 ]
+          if [ "$restart_lag_counter" -ge "25" ]
           then
             restart="True"
             break
@@ -1420,7 +1420,7 @@ function bugMotion() {
               i=$(ros2 topic echo --once /scan -f)
               sleep 1
               restart_lag_counter=$(($restart_lag_counter+1))
-              if [ "$restart_lag_counter" -ge 25 ]
+              if [ "$restart_lag_counter" -ge "25" ]
               then
                 restart="True"
                 break
@@ -1501,7 +1501,7 @@ function bugMotion() {
                   i=$(ros2 topic echo --once /scan -f)
                   sleep 1
                   restart_lag_counter=$(($restart_lag_counter+1))
-                  if [ "$restart_lag_counter" -ge 25 ]
+                  if [ "$restart_lag_counter" -ge "25" ]
                   then
                     restart="True"
                     break
@@ -1547,7 +1547,7 @@ function bugMotionQ_vfh() {
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
       restart_lag_counter=$(($restart_lag_counter+1))
-      if [ "$restart_lag_counter" -ge 25 ]
+      if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
         break
@@ -1602,7 +1602,7 @@ function motionAccordingToQtable() {
     i=$(ros2 topic echo --once /scan -f)
     sleep 1
     restart_lag_counter=$(($restart_lag_counter+1))
-    if [ "$restart_lag_counter" -ge 25 ]
+    if [ "$restart_lag_counter" -ge "25" ]
     then
       restart="True"
       break
@@ -1670,7 +1670,7 @@ function OneEpisodeMotion() {
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
       restart_lag_counter=$(($restart_lag_counter+1))
-      if [ "$restart_lag_counter" -ge 25 ]
+      if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
         break
