@@ -621,6 +621,8 @@ function roundToTargetAngle() {
   ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
 }
 
+slow_down_distance="0.75"
+
 function movingFront2() {
   moving="moving"
 
@@ -630,6 +632,39 @@ function movingFront2() {
     # x=0.65 - врезается, 0.55- слишком медленно
 
   ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.6, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+
+  restart_lag_counter=0
+  i=$(ros2 topic echo --once /scan -f)
+  while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+    i=$(ros2 topic echo --once /scan -f)
+    sleep 1
+    restart_lag_counter=$(($restart_lag_counter+1))
+    if [ "$restart_lag_counter" -ge "25" ]
+    then
+      restart="True"
+      break
+    fi
+  done
+
+  if [ "$restart" == "True" ]
+    then
+      return
+  fi
+
+  distanceAngle=($(python3 getDistanceFromAngle.py $i "0"))
+  tempDif=($(python3 diffF1_F2.py $distanceAngle $slow_down_distance))
+  bigger0=($(python3 biggerThanZero.py $tempDif))
+  distanceAngle=($(python3 getDistanceFromAngle.py $i $ZAPAS_PO_UGLU))
+  tempDif=($(python3 diffF1_F2.py $distanceAngle $slow_down_distance))
+  bigger1=($(python3 biggerThanZero.py $tempDif))
+  distanceAngle=($(python3 getDistanceFromAngle.py $i $((360-$ZAPAS_PO_UGLU))))
+  tempDif=($(python3 diffF1_F2.py $distanceAngle $slow_down_distance))
+  bigger2=($(python3 biggerThanZero.py $tempDif))
+  if [ "False" = "$bigger0" -o "False" = "$bigger1" -o "False" = "$bigger2" ]
+    then
+      ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.02, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+  fi
+
   #sleep 2
   while [ "moving" = "$moving" ]; do
     c=($(cat commands.txt))
@@ -655,6 +690,22 @@ function movingFront2() {
         break
     fi
 
+    distanceAngle=($(python3 getDistanceFromAngle.py $i "0"))
+    tempDif=($(python3 diffF1_F2.py $distanceAngle $slow_down_distance))
+    bigger0=($(python3 biggerThanZero.py $tempDif))
+    distanceAngle=($(python3 getDistanceFromAngle.py $i $ZAPAS_PO_UGLU))
+    tempDif=($(python3 diffF1_F2.py $distanceAngle $slow_down_distance))
+    bigger1=($(python3 biggerThanZero.py $tempDif))
+    distanceAngle=($(python3 getDistanceFromAngle.py $i $((360-$ZAPAS_PO_UGLU))))
+    tempDif=($(python3 diffF1_F2.py $distanceAngle $slow_down_distance))
+    bigger2=($(python3 biggerThanZero.py $tempDif))
+    if [ "False" = "$bigger0" -o "False" = "$bigger1" -o "False" = "$bigger2" ]
+      then
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.02, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+      else
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.3, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+    fi
+
     close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
     sideTemp=${close_t2[-1]}
     echo "sideTemp="$sideTemp
@@ -666,7 +717,7 @@ function movingFront2() {
     #x: = 0.65 - не огибает, слишком медленно
 
     #x: = 0.85,  0.8,0.72, 0.68, 0.13, 0.085, 0.05 - не огибает, слишком быстро
-    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.02, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+    #ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.02, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
 
     echo "check GOAL"
     i=$(ros2 topic echo --once /odom)
@@ -1881,7 +1932,15 @@ function qMotion() {
 #save_to_blockchain
 #get_from_blockchain
 
-qMotion
+#qMotion
+vfhMotion
+vfhMotion
+bugMotionLeftSide
+bugMotionLeftSide
+bugMotionLeftSide
+bugMotionLeftSide
+bugMotionLeftSide
+bugMotionLeftSide
 #Xcurr="1"
 #Ycurr="1"
 #Xprev="0"
