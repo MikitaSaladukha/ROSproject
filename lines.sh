@@ -621,7 +621,9 @@ function roundToTargetAngle() {
   ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
 }
 
-slow_down_distance="0.75"
+slow_down_distance="3"
+speed_start="0.2" #было 0.6
+speed_next="0.1" #было 0.3
 
 function movingFront2() {
   moving="moving"
@@ -631,7 +633,21 @@ function movingFront2() {
     #x: = 1.59, 1.0, 0.94, 0.85, 0.75 - не огибает, слишком быстро
     # x=0.65 - врезается, 0.55- слишком медленно
 
-  ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.6, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+  ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.25, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+  distanceAngle=($(python3 getDistanceFromAngle.py $i "0"))
+  tempDif=($(python3 diffF1_F2.py $distanceAngle $slow_down_distance))
+  bigger0=($(python3 biggerThanZero.py $tempDif))
+  distanceAngle=($(python3 getDistanceFromAngle.py $i $ZAPAS_PO_UGLU))
+  tempDif=($(python3 diffF1_F2.py $distanceAngle $slow_down_distance))
+  bigger1=($(python3 biggerThanZero.py $tempDif))
+  distanceAngle=($(python3 getDistanceFromAngle.py $i $((360-$ZAPAS_PO_UGLU))))
+  tempDif=($(python3 diffF1_F2.py $distanceAngle $slow_down_distance))
+  bigger2=($(python3 biggerThanZero.py $tempDif))
+  if [ "False" = "$bigger0" -o "False" = "$bigger1" -o "False" = "$bigger2" ]
+    then
+      ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.02, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+  fi
+
 
   restart_lag_counter=0
   i=$(ros2 topic echo --once /scan -f)
@@ -673,6 +689,22 @@ function movingFront2() {
         break
     fi
 
+    distanceAngle=($(python3 getDistanceFromAngle.py $i "0"))
+    tempDif=($(python3 diffF1_F2.py $distanceAngle $slow_down_distance))
+    bigger0=($(python3 biggerThanZero.py $tempDif))
+    distanceAngle=($(python3 getDistanceFromAngle.py $i $ZAPAS_PO_UGLU))
+    tempDif=($(python3 diffF1_F2.py $distanceAngle $slow_down_distance))
+    bigger1=($(python3 biggerThanZero.py $tempDif))
+    distanceAngle=($(python3 getDistanceFromAngle.py $i $((360-$ZAPAS_PO_UGLU))))
+    tempDif=($(python3 diffF1_F2.py $distanceAngle $slow_down_distance))
+    bigger2=($(python3 biggerThanZero.py $tempDif))
+    if [ "False" = "$bigger0" -o "False" = "$bigger1" -o "False" = "$bigger2" ]
+      then
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.02, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+      else
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+    fi
+
     restart_lag_counter=0
     i=$(ros2 topic echo --once /scan -f)
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
@@ -703,7 +735,7 @@ function movingFront2() {
       then
         ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.02, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
       else
-        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.3, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
     fi
 
     close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
@@ -1935,6 +1967,12 @@ function qMotion() {
 #qMotion
 vfhMotion
 vfhMotion
+#bugMotionRightSide
+#bugMotionRightSide
+#bugMotionRightSide
+#bugMotionRightSide
+#bugMotionRightSide
+bugMotionLeftSide
 bugMotionLeftSide
 bugMotionLeftSide
 bugMotionLeftSide
