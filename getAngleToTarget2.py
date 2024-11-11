@@ -47,6 +47,9 @@ if __name__ == '__main__':
         targetAngle=currentAngle-90
     if sys.argv[-1] == "left_side":
         targetAngle = currentAngle + 90
+
+    if targetAngle<-180: targetAngle = 360 + targetAngle
+    if targetAngle>360: targetAngle = targetAngle - 360
     print_angle(currentAngle,targetAngle)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

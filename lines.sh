@@ -444,21 +444,22 @@ function turn90() {
   angle=($(python3 getAngleToTarget2.py $i $side))
   angel_target=${angle[-1]}
   angle_current=${angle[-2]}
-  good="false"
-  while [ "false" = "$good" ]; do
-    i=$(ros2 topic echo --once /odom)
-    angle=($(python3 getAngleToTarget2.py $i $side))
-    angle_current=${angle[-2]}
-    delta="3.0"
-    good=($(python3 compareAngles.py $delta $angel_target $angle_current))
-
-    rollingSpeed=($(python3 getRollingSpeed.py $angel_target $angle_current))
-
-    speedString=" "${rollingSpeed[0]}" "${rollingSpeed[1]}" "${rollingSpeed[2]}" "${rollingSpeed[3]}" "${rollingSpeed[4]}" "${rollingSpeed[5]}" "${rollingSpeed[6]}" "${rollingSpeed[7]}" "${rollingSpeed[8]}" "${rollingSpeed[9]}" "${rollingSpeed[10]}" "${rollingSpeed[11]}" "${rollingSpeed[12]}
-    echo  'Turn90: RollingSpeed='$speedString' angle1='${angle[-1]}' angle2='${angle[-2]}
-    mycommand='ros2 topic pub --once /cmd_vel geometry_msgs/Twist '$speedString
-    eval $mycommand
-  done
+  roundToTargetAngle $angel_target
+#  good="false"
+#  while [ "false" = "$good" ]; do
+#    i=$(ros2 topic echo --once /odom)
+#    angle=($(python3 getAngleToTarget2.py $i $side))
+#    angle_current=${angle[-2]}
+#    delta="3.0"
+#    good=($(python3 compareAngles.py $delta $angel_target $angle_current))
+#
+#    rollingSpeed=($(python3 getRollingSpeed.py $angel_target $angle_current))
+#
+#    speedString=" "${rollingSpeed[0]}" "${rollingSpeed[1]}" "${rollingSpeed[2]}" "${rollingSpeed[3]}" "${rollingSpeed[4]}" "${rollingSpeed[5]}" "${rollingSpeed[6]}" "${rollingSpeed[7]}" "${rollingSpeed[8]}" "${rollingSpeed[9]}" "${rollingSpeed[10]}" "${rollingSpeed[11]}" "${rollingSpeed[12]}
+#    echo  'Turn90: RollingSpeed='$speedString' angle1='${angle[-1]}' angle2='${angle[-2]}
+#    mycommand='ros2 topic pub --once /cmd_vel geometry_msgs/Twist '$speedString
+#    eval $mycommand
+#  done
   ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
 }
 
@@ -1964,21 +1965,24 @@ function qMotion() {
 #save_to_blockchain
 #get_from_blockchain
 
-#qMotion
-vfhMotion
-vfhMotion
+qMotion
+#vfhMotion
+#vfhMotion
 #bugMotionRightSide
 #bugMotionRightSide
 #bugMotionRightSide
 #bugMotionRightSide
 #bugMotionRightSide
-bugMotionLeftSide
-bugMotionLeftSide
-bugMotionLeftSide
-bugMotionLeftSide
-bugMotionLeftSide
-bugMotionLeftSide
-bugMotionLeftSide
+#bugMotionRightSide
+#bugMotionRightSide
+#bugMotionRightSide
+#bugMotionLeftSide
+#bugMotionLeftSide
+#bugMotionLeftSide
+#bugMotionLeftSide
+#bugMotionLeftSide
+#bugMotionLeftSide
+#bugMotionLeftSide
 #Xcurr="1"
 #Ycurr="1"
 #Xprev="0"
