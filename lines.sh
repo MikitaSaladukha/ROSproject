@@ -62,6 +62,7 @@ function turnToTarget() {
     if [ "$restart_lag_counter" -ge "25" ]
     then
       restart="True"
+      echo "restarting"
       return
     fi
   done
@@ -101,6 +102,7 @@ function roundToTarget() {
       if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
+        echo "restarting"
         return
       fi
     done
@@ -133,6 +135,7 @@ function rollingForOrtogonal() {
       if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
+        echo "restarting"
         return
       fi
     done
@@ -170,6 +173,7 @@ function rollingForOrtogonal() {
       if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
+        echo "restarting"
         return
       fi
     done
@@ -199,6 +203,7 @@ function turn90() {
     if [ "$restart_lag_counter" -ge "25" ]
     then
       restart="True"
+      echo "restarting"
       return
     fi
   done
@@ -252,6 +257,7 @@ function roundToTargetAngle() {
       if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
+        echo "restarting"
         return
       fi
     done
@@ -269,6 +275,7 @@ function roundToTargetAngle() {
       if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
+        echo "restarting"
         return
       fi
     done
@@ -318,14 +325,10 @@ function movingFront2() {
     if [ "$restart_lag_counter" -ge "25" ]
     then
       restart="True"
+      echo "restarting"
       return
     fi
   done
-
-#  if [ "$restart" == "True" ]
-#    then
-#      return
-#  fi
 
   distanceAngle=($(python3 getDistanceFromAngle.py $i "0"))
   tempDif=($(python3 diffF1_F2.py $distanceAngle $slow_down_distance))
@@ -374,13 +377,11 @@ function movingFront2() {
       if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
+        echo "restarting"
         return
       fi
     done
-#    if [ "$restart" == "True" ]
-#      then
-#        break
-#    fi
+
 
     distanceAngle=($(python3 getDistanceFromAngle.py $i "0"))
     tempDif=($(python3 diffF1_F2.py $distanceAngle $slow_down_distance))
@@ -422,6 +423,7 @@ function movingFront2() {
       if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
+        echo "restarting"
         return
       fi
     done
@@ -454,6 +456,7 @@ function movingFront2() {
       if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
+        echo "restarting"
         return
       fi
     done
@@ -488,6 +491,7 @@ function additionalTurning() {
     if [ "$restart_lag_counter" -ge "25" ]
     then
       restart="True"
+      echo "restarting"
       return
     fi
   done
@@ -512,6 +516,7 @@ function additionalTurning() {
       if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
+        echo "restarting"
         return
       fi
     done
@@ -539,6 +544,7 @@ function additionalTurning() {
           if [ "$restart_lag_counter" -ge "25" ]
           then
             restart="True"
+            echo "restarting"
             return
           fi
         done
@@ -574,6 +580,7 @@ function vfhMotion() {
       if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
+        echo "restarting"
         return
       fi
     done
@@ -591,6 +598,7 @@ function vfhMotion() {
       if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
+        echo "restarting"
         return
       fi
     done
@@ -647,6 +655,7 @@ function vfhMotion() {
       if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
+        echo "restarting"
         return
       fi
     done
@@ -667,6 +676,7 @@ function vfhMotion() {
         if [ "$restart_lag_counter" -ge "25" ]
         then
           restart="True"
+          echo "restarting"
           return
         fi
       done
@@ -690,6 +700,7 @@ function vfhMotion() {
         if [ "$restart_lag_counter" -ge "25" ]
         then
           restart="True"
+          echo "restarting"
           return
         fi
       done
@@ -724,6 +735,7 @@ function vfhMotion() {
         if [ "$restart_lag_counter" -ge "25" ]
         then
           restart="True"
+          echo "restarting"
           return
         fi
       done
@@ -754,6 +766,7 @@ function vfhMotion() {
         if [ "$restart_lag_counter" -ge "25" ]
         then
           restart="True"
+          echo "restarting"
           return
         fi
       done
@@ -778,6 +791,7 @@ function vfhMotion() {
         if [ "$restart_lag_counter" -ge "25" ]
         then
           restart="True"
+          echo "restarting"
           return
         fi
       done
@@ -810,6 +824,7 @@ function vfhMotion() {
       if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
+        echo "restarting"
         return
       fi
     done
@@ -856,14 +871,11 @@ function bugMotion() {
           if [ "$restart_lag_counter" -ge "25" ]
           then
             restart="True"
+            echo "restarting"
             return
           fi
         done
 
-#        if [ "$restart" == "True" ]
-#          then
-#            return
-#        fi
         close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
         sideTemp=${close_t2[-1]}
         echo "sideTemp="$sideTemp
@@ -892,14 +904,10 @@ function bugMotion() {
               if [ "$restart_lag_counter" -ge "25" ]
               then
                 restart="True"
+                echo "restarting"
                 return
               fi
             done
-
-#            if [ "$restart" == "True" ]
-#              then
-#                break
-#            fi
 
             close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
             sideTemp=${close_t2[-1]}
@@ -920,6 +928,7 @@ function bugMotion() {
               if [ "$restart_lag_counter" -ge "25" ]
               then
                 restart="True"
+                echo "restarting"
                 return
               fi
             done
@@ -984,14 +993,11 @@ function bugMotion() {
                   if [ "$restart_lag_counter" -ge "25" ]
                   then
                     restart="True"
+                    echo "restarting"
                     return
                   fi
                 done
 
-                if [ "$restart" == "True" ]
-                  then
-                    break
-                fi
                 close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
                 sideTemp=${close_t2[-1]}
                 echo "sideTemp="$sideTemp
@@ -1013,8 +1019,9 @@ function bugMotion() {
 function bugMotionLeftSide() {
   side="left_side"
   bugMotionQ_vfh
-  if [ "$restart" == "True" ]
+  if [ "$restart" = "True" ]
     then
+      echo "restarting"
       return
   fi
 }
@@ -1022,8 +1029,9 @@ function bugMotionLeftSide() {
 function bugMotionRightSide() {
   side="right_side"
   bugMotionQ_vfh
-  if [ "$restart" == "True" ]
+  if [ "$restart" = "True" ]
     then
+      echo "restarting"
       return
   fi
 }
@@ -1038,6 +1046,7 @@ function bugMotionQ_vfh() {
       if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
+        echo "restarting"
         return
       fi
     done
@@ -1045,18 +1054,20 @@ function bugMotionQ_vfh() {
     sideTemp=${close_t[-1]}
     angle=${close_t[-2]}
     echo "sideTemp="$sideTemp
-    if [ $sideTemp == "none" ]
+    if [ "$sideTemp" = "none" ]
         then
           motionVariant="vfh"
           vfhMotion
-          if [ "$restart" == "True" ]
+          if [ "$restart" = "True" ]
             then
+              echo "restarting"
               return
           fi
         else
           bugMotion
-          if [ "$restart" == "True" ]
+          if [ "$restart" = "True" ]
             then
+              echo "restarting"
               return
           fi
     fi
@@ -1074,6 +1085,7 @@ function motionAccordingToQtable() {
     if [ "$restart_lag_counter" -ge "25" ]
     then
       restart="True"
+      echo "restarting"
       return
     fi
   done
@@ -1088,24 +1100,27 @@ function motionAccordingToQtable() {
   if [ "vfh" = "$motionVariant" ]
     then
       vfhMotion
-      if [ "$restart" == "True" ]
+      if [ "$restart" = "True" ]
         then
+          echo "restarting"
           return
       fi
   fi
   if [ "bug_left" = "$motionVariant" ]
     then
       bugMotionLeftSide
-      if [ "$restart" == "True" ]
+      if [ "$restart" = "True" ]
         then
+          echo "restarting"
           return
       fi
   fi
   if [ "bug_right" = "$motionVariant" ]
     then
       bugMotionRightSide
-      if [ "$restart" == "True" ]
+      if [ "$restart" = "True" ]
         then
+          echo "restarting"
           return
       fi
   fi
@@ -1124,14 +1139,11 @@ function motionAccordingToQtable() {
     if [ "$restart_lag_counter" -ge "25" ]
     then
       restart="True"
+      echo "restarting"
       return
     fi
   done
 
-#  if [ "$restart" == "True" ]
-#    then
-#      return
-#  fi
   close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
   sideTemp=${close_t2[-1]}
   echo "sideTemp="$sideTemp
@@ -1149,6 +1161,7 @@ function motionAccordingToQtable() {
     if [ "$restart_lag_counter" -ge "25" ]
     then
       restart="True"
+      echo "restarting"
       return
     fi
   done
@@ -1174,8 +1187,9 @@ function OneEpisodeMotion() {
   while [ "True" = "True" ]; do
     echo "step_started"
     motionAccordingToQtable
-    if [ "$restart" == "True" ]
+    if [ "$restart" = "True" ]
       then
+        echo "restarting"
         return
     fi
     c=($(cat commands.txt))
@@ -1193,6 +1207,7 @@ function OneEpisodeMotion() {
       if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
+        echo "restarting"
         return
       fi
     done
@@ -1225,6 +1240,7 @@ function OneEpisodeMotion() {
       if [ "$restart_lag_counter" -ge "25" ]
       then
         restart="True"
+        echo "restarting"
         return
       fi
     done
