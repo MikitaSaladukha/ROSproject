@@ -214,20 +214,8 @@ function turn90() {
   ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
 }
 
-
-
-
-
-set_k_b $targetX $targetY
-echo "k="$k
-echo "b="$b
-
 Lcloser="False"
 closeExtent="0.09"
-
-#checkOnLine
-#echo $online
-#set_k_b $targetX $targetY
 
 function turnToTargetAngle() {
   source /opt/ros/humble/setup.bash
