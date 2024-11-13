@@ -93,6 +93,11 @@ function roundToTarget() {
   while [ "false" = "$good" ]
   do
     turnToTarget $x_target $y_target
+    if [ "$restart" = "True" ]
+      then
+        echo "restarting"
+        return
+    fi
     i=$(ros2 topic echo --once /odom)
     restart_lag_counter=0
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
@@ -211,6 +216,11 @@ function turn90() {
   angel_target=${angle[-1]}
   angle_current=${angle[-2]}
   roundToTargetAngle $angel_target
+  if [ "$restart" = "True" ]
+      then
+        echo "restarting"
+        return
+  fi
   ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
 }
 
@@ -254,6 +264,11 @@ function roundToTargetAngle() {
     angleCurrent=${angle[-1]}
     echo "current angle="$angleCurrent
     turnToTargetAngle $angleTarget $angleCurrent
+    if [ "$restart" = "True" ]
+      then
+        echo "restarting"
+        return
+    fi
     restart_lag_counter=0
     i=$(ros2 topic echo --once /odom)
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
@@ -629,9 +644,19 @@ function vfhMotion() {
     turnAngle=${close[$(($obstacleEnd+1))]}
     echo "start turning by vfh*"
     roundToTargetAngle $turnAngle
+    if [ "$restart" = "True" ]
+      then
+        echo "restarting"
+        return
+    fi
     echo "end turning by vfh*"
 
     additionalTurning
+    if [ "$restart" = "True" ]
+      then
+        echo "restarting"
+        return
+    fi
 
 
     i=$(ros2 topic echo --once /odom)
@@ -843,6 +868,11 @@ function bugMotion() {
 
         echo "rollingForOrtogonal START"
         rollingForOrtogonal $side
+        if [ "$restart" = "True" ]
+          then
+            echo "restarting"
+            return
+        fi
         echo "rollingForOrtogonal DONE"
         c=($(cat commands.txt))
         if [ $c = "pauseQ" ]
@@ -876,6 +906,11 @@ function bugMotion() {
         while [ "True" = "True" ]; do
             echo "movingFront2 START"
             movingFront2
+            if [ "$restart" = "True" ]
+              then
+                echo "restarting"
+                return
+            fi
             echo "movingFront2 DONE"
             c=($(cat commands.txt))
             if [ $c = "pauseQ" ]
@@ -948,6 +983,11 @@ function bugMotion() {
                 #ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: -0.025, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
                 echo "turn90 START"
                 turn90 $side
+                if [ "$restart" = "True" ]
+                  then
+                    echo "restarting"
+                    return
+                fi
                 echo "turn90 DONE"
                 if [ "$zeroCheck" = "true" ]
                   then
@@ -966,6 +1006,11 @@ function bugMotion() {
                   fi
                 echo "rollingForOrtogonal START"
                 rollingForOrtogonal $side
+                if [ "$restart" = "True" ]
+                  then
+                    echo "restarting"
+                    return
+                fi
                 echo "rollingForOrtogonal DONE"
                 c=($(cat commands.txt))
                 if [ $c = "pauseQ" ]
