@@ -48,6 +48,7 @@ collision_distance="0.12"
 #cubes:
 #targetX="9"
 #targetY="-1" # положительные у слева, отрицательные справа
+countdown="25"
 
 function turnToTarget() {
   source /opt/ros/humble/setup.bash
@@ -58,6 +59,7 @@ function turnToTarget() {
   while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
     i=$(ros2 topic echo --once /odom)
     sleep 1
+    echo "restart countdown: "$((25-$restart_lag_counter))
     restart_lag_counter=$(($restart_lag_counter+1))
     if [ "$restart_lag_counter" -ge "25" ]
     then
@@ -103,6 +105,7 @@ function roundToTarget() {
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /odom)
       sleep 1
+      echo "restart countdown: "$((25-$restart_lag_counter))
       restart_lag_counter=$(($restart_lag_counter+1))
       if [ "$restart_lag_counter" -ge "25" ]
       then
@@ -136,6 +139,7 @@ function rollingForOrtogonal() {
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
+      echo "restart countdown: "$((25-$restart_lag_counter))
       restart_lag_counter=$(($restart_lag_counter+1))
       if [ "$restart_lag_counter" -ge "25" ]
       then
@@ -174,6 +178,7 @@ function rollingForOrtogonal() {
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
+      echo "restart countdown: "$((25-$restart_lag_counter))
       restart_lag_counter=$(($restart_lag_counter+1))
       if [ "$restart_lag_counter" -ge "25" ]
       then
@@ -204,6 +209,7 @@ function turn90() {
   while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
     i=$(ros2 topic echo --once /odom)
     sleep 1
+    echo "restart countdown: "$((25-$restart_lag_counter))
     restart_lag_counter=$(($restart_lag_counter+1))
     if [ "$restart_lag_counter" -ge "25" ]
     then
@@ -251,6 +257,7 @@ function roundToTargetAngle() {
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /odom)
       sleep 1
+      echo "restart countdown: "$((25-$restart_lag_counter))
       restart_lag_counter=$(($restart_lag_counter+1))
       if [ "$restart_lag_counter" -ge "25" ]
       then
@@ -274,6 +281,7 @@ function roundToTargetAngle() {
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /odom)
       sleep 1
+      echo "restart countdown: "$((25-$restart_lag_counter))
       restart_lag_counter=$(($restart_lag_counter+1))
       if [ "$restart_lag_counter" -ge "25" ]
       then
@@ -324,6 +332,7 @@ function movingFront2() {
   while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
     i=$(ros2 topic echo --once /scan -f)
     sleep 1
+    echo "restart countdown: "$((25-$restart_lag_counter))
     restart_lag_counter=$(($restart_lag_counter+1))
     if [ "$restart_lag_counter" -ge "25" ]
     then
@@ -376,6 +385,7 @@ function movingFront2() {
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
+      echo "restart countdown: "$((25-$restart_lag_counter))
       restart_lag_counter=$(($restart_lag_counter+1))
       if [ "$restart_lag_counter" -ge "25" ]
       then
@@ -422,6 +432,7 @@ function movingFront2() {
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /odom)
       sleep 1
+      echo "restart countdown: "$((25-$restart_lag_counter))
       restart_lag_counter=$(($restart_lag_counter+1))
       if [ "$restart_lag_counter" -ge "25" ]
       then
@@ -455,6 +466,7 @@ function movingFront2() {
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
+      echo "restart countdown: "$((25-$restart_lag_counter))
       restart_lag_counter=$(($restart_lag_counter+1))
       if [ "$restart_lag_counter" -ge "25" ]
       then
@@ -490,6 +502,7 @@ function additionalTurning() {
   while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
     i=$(ros2 topic echo --once /scan -f)
     sleep 1
+    echo "restart countdown: "$((25-$restart_lag_counter))
     restart_lag_counter=$(($restart_lag_counter+1))
     if [ "$restart_lag_counter" -ge "25" ]
     then
@@ -515,6 +528,7 @@ function additionalTurning() {
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
+      echo "restart countdown: "$((25-$restart_lag_counter))
       restart_lag_counter=$(($restart_lag_counter+1))
       if [ "$restart_lag_counter" -ge "25" ]
       then
@@ -543,6 +557,7 @@ function additionalTurning() {
         while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
           i=$(ros2 topic echo --once /scan -f)
           sleep 1
+          echo "restart countdown: "$((25-$restart_lag_counter))
           restart_lag_counter=$(($restart_lag_counter+1))
           if [ "$restart_lag_counter" -ge "25" ]
           then
@@ -579,6 +594,7 @@ function vfhMotion() {
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /odom)
       sleep 1
+      echo "restart countdown: "$((25-$restart_lag_counter))
       restart_lag_counter=$(($restart_lag_counter+1))
       if [ "$restart_lag_counter" -ge "25" ]
       then
@@ -597,6 +613,7 @@ function vfhMotion() {
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
+      echo "restart countdown: "$((25-$restart_lag_counter))
       restart_lag_counter=$(($restart_lag_counter+1))
       if [ "$restart_lag_counter" -ge "25" ]
       then
@@ -664,6 +681,7 @@ function vfhMotion() {
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /odom)
       sleep 1
+      echo "restart countdown: "$((25-$restart_lag_counter))
       restart_lag_counter=$(($restart_lag_counter+1))
       if [ "$restart_lag_counter" -ge "25" ]
       then
@@ -685,6 +703,7 @@ function vfhMotion() {
       while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
         i=$(ros2 topic echo --once /scan -f)
         sleep 1
+        echo "restart countdown: "$((25-$restart_lag_counter))
         restart_lag_counter=$(($restart_lag_counter+1))
         if [ "$restart_lag_counter" -ge "25" ]
         then
@@ -709,6 +728,7 @@ function vfhMotion() {
       while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
         i=$(ros2 topic echo --once /odom)
         sleep 1
+        echo "restart countdown: "$((25-$restart_lag_counter))
         restart_lag_counter=$(($restart_lag_counter+1))
         if [ "$restart_lag_counter" -ge "25" ]
         then
@@ -744,6 +764,7 @@ function vfhMotion() {
       while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
         i=$(ros2 topic echo --once /odom)
         sleep 1
+        echo "restart countdown: "$((25-$restart_lag_counter))
         restart_lag_counter=$(($restart_lag_counter+1))
         if [ "$restart_lag_counter" -ge "25" ]
         then
@@ -775,6 +796,7 @@ function vfhMotion() {
       while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
         i=$(ros2 topic echo --once /scan -f)
         sleep 1
+        echo "restart countdown: "$((25-$restart_lag_counter))
         restart_lag_counter=$(($restart_lag_counter+1))
         if [ "$restart_lag_counter" -ge "25" ]
         then
@@ -800,6 +822,7 @@ function vfhMotion() {
       while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
         i=$(ros2 topic echo --once /scan -f)
         sleep 1
+        echo "restart countdown: "$((25-$restart_lag_counter))
         restart_lag_counter=$(($restart_lag_counter+1))
         if [ "$restart_lag_counter" -ge "25" ]
         then
@@ -833,6 +856,7 @@ function vfhMotion() {
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
+      echo "restart countdown: "$((25-$restart_lag_counter))
       restart_lag_counter=$(($restart_lag_counter+1))
       if [ "$restart_lag_counter" -ge "25" ]
       then
@@ -885,6 +909,7 @@ function bugMotion() {
         while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
           i=$(ros2 topic echo --once /scan -f)
           sleep 1
+          echo "restart countdown: "$((25-$restart_lag_counter))
           restart_lag_counter=$(($restart_lag_counter+1))
           if [ "$restart_lag_counter" -ge "25" ]
           then
@@ -923,6 +948,7 @@ function bugMotion() {
             while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
               i=$(ros2 topic echo --once /scan -f)
               sleep 1
+              echo "restart countdown: "$((25-$restart_lag_counter))
               restart_lag_counter=$(($restart_lag_counter+1))
               if [ "$restart_lag_counter" -ge "25" ]
               then
@@ -947,6 +973,7 @@ function bugMotion() {
             while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
               i=$(ros2 topic echo --once /odom)
               sleep 1
+              echo "restart countdown: "$((25-$restart_lag_counter))
               restart_lag_counter=$(($restart_lag_counter+1))
               if [ "$restart_lag_counter" -ge "25" ]
               then
@@ -1022,6 +1049,7 @@ function bugMotion() {
                 while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
                   i=$(ros2 topic echo --once /scan -f)
                   sleep 1
+                  echo "restart countdown: "$((25-$restart_lag_counter))
                   restart_lag_counter=$(($restart_lag_counter+1))
                   if [ "$restart_lag_counter" -ge "25" ]
                   then
@@ -1075,6 +1103,7 @@ function bugMotionQ_vfh() {
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
+      echo "restart countdown: "$((25-$restart_lag_counter))
       restart_lag_counter=$(($restart_lag_counter+1))
       if [ "$restart_lag_counter" -ge "25" ]
       then
@@ -1114,6 +1143,7 @@ function motionAccordingToQtable() {
   while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
     i=$(ros2 topic echo --once /odom)
     sleep 1
+    echo "restart countdown: "$((25-$restart_lag_counter))
     restart_lag_counter=$(($restart_lag_counter+1))
     if [ "$restart_lag_counter" -ge "25" ]
     then
@@ -1168,6 +1198,7 @@ function motionAccordingToQtable() {
   while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
     i=$(ros2 topic echo --once /scan -f)
     sleep 1
+    echo "restart countdown: "$((25-$restart_lag_counter))
     restart_lag_counter=$(($restart_lag_counter+1))
     if [ "$restart_lag_counter" -ge "25" ]
     then
@@ -1190,6 +1221,7 @@ function motionAccordingToQtable() {
   while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
     i=$(ros2 topic echo --once /odom)
     sleep 1
+    echo "restart countdown: "$((25-$restart_lag_counter))
     restart_lag_counter=$(($restart_lag_counter+1))
     if [ "$restart_lag_counter" -ge "25" ]
     then
@@ -1236,6 +1268,7 @@ function OneEpisodeMotion() {
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /scan -f)
       sleep 1
+      echo "restart countdown: "$((25-$restart_lag_counter))
       restart_lag_counter=$(($restart_lag_counter+1))
       if [ "$restart_lag_counter" -ge "25" ]
       then
@@ -1269,6 +1302,7 @@ function OneEpisodeMotion() {
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
       i=$(ros2 topic echo --once /odom)
       sleep 1
+      echo "restart countdown: "$((25-$restart_lag_counter))
       restart_lag_counter=$(($restart_lag_counter+1))
       if [ "$restart_lag_counter" -ge "25" ]
       then
