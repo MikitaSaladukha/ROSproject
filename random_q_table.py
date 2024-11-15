@@ -22,11 +22,10 @@ def generate_random_q_table():
         while y < Ymax:
             arrayY.append([float(y), float(y + stepY)])
             if ((global_values.Xtarget >= x) and (global_values.Ytarget >= y) and (global_values.Xtarget <= x +stepX) and (global_values.Ytarget <= y +stepY)):
-
                 future_jsonY.update({str(arrayY[len(arrayY) - 1]):
-                                         {"vfh": 10.0,
-                                          "bug_left": 10.0,
-                                          "bug_right": 10.0}})
+                                         {"vfh": 59.9,
+                                          "bug_left": 59.8,
+                                          "bug_right": 59.8}})
             else:
                 future_jsonY.update({str(arrayY[len(arrayY) - 1]):
                                      {"vfh": 1.1,

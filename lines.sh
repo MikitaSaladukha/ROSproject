@@ -301,7 +301,7 @@ function roundToTargetAngle() {
   ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
 }
 
-slow_down_distance="3"
+slow_down_distance="1.66"
 speed_start="0.2" #было 0.6
 speed_next="0.1" #было 0.3
 
