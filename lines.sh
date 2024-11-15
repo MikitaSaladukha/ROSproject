@@ -194,7 +194,9 @@ function rollingForOrtogonal() {
     echo "closest dist"${close_t2[-4]}
     if [ "$sideTemp" != "none" ]
         then
-          break
+          restart="True"
+          echo "restarting due to collision"
+          return
     fi
   done
   echo "ended rollingForOrtogonal"
@@ -492,7 +494,9 @@ function movingFront2() {
     echo "closest dist"${close_t2[-4]}
     if [ "$sideTemp" != "none" ]
         then
-          break
+          restart="True"
+          echo "restarting due to collision"
+          return
     fi
     #x: = 0.65 - не огибает, слишком медленно
 
@@ -528,7 +532,7 @@ function movingFront2() {
       echo "goal REACHED"
       ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
       goal="true"
-      break
+      return
     fi
     echo "goal check DONE"
 
@@ -860,7 +864,7 @@ function vfhMotion() {
         echo "goal REACHED"
         ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
         goal="true"
-        break
+        return
       fi
       echo "goal check DONE"
 
@@ -960,6 +964,8 @@ function bugMotion() {
         if [ "true" = "$goal" ]
           then
             echo "goal REACHED"
+            ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+            goal="true"
             return
         fi
 
@@ -998,6 +1004,8 @@ function bugMotion() {
         echo "closest dist"${close_t2[-4]}
         if [ "$sideTemp" != "none" ]
             then
+              restart="True"
+              echo "restarting due to collision"
               return
         fi
         echo "L1="$L1
@@ -1037,7 +1045,9 @@ function bugMotion() {
             echo "closest dist"${close_t2[-4]}
             if [ "$sideTemp" != "none" ]
                 then
-                  break
+                  restart="True"
+                  echo "restarting due to collision"
+                  return
             fi
         ###########################################
             echo "check GOAL"
@@ -1069,7 +1079,7 @@ function bugMotion() {
               echo "goal REACHED"
               ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
               goal="true"
-              break
+              return
             fi
             echo "goal check DONE"
 
@@ -1138,7 +1148,9 @@ function bugMotion() {
                 echo "closest dist"${close_t2[-4]}
                 if [ "$sideTemp" != "none" ]
                     then
-                      break
+                      restart="True"
+                      echo "restarting due to collision"
+                      return
                 fi
                 firstCheck="true"
                 echo "firstCheck set to true"
@@ -1287,6 +1299,8 @@ function motionAccordingToQtable() {
   echo "closest dist"${close_t2[-4]}
   if [ "$sideTemp" != "none" ]
       then
+        restart="True"
+        echo "restarting due to collision"
         return
   fi
   i=$(ros2 topic echo --once /odom)
@@ -1322,7 +1336,7 @@ function OneEpisodeMotion() {
   echo ${set_global[0]}" "${set_global[1]}" "${set_global[2]}" "${set_global[3]}" "${set_global[4]}" "${set_global[5]}" "${set_global[6]}" "${set_global[7]}
   echo "episode_started"
   step_number=0
-  while [ "True" = "True" ]; do
+  while [ "goal" != "true" ]; do
     echo "step_started"
     motionAccordingToQtable
     if [ "$restart" = "True" ]
@@ -1357,7 +1371,9 @@ function OneEpisodeMotion() {
     echo "closest dist"${close_t2[-4]}
     if [ "$sideTemp" != "none" ]
         then
-          break
+          restart="True"
+          echo "restarting due to collision"
+          return
     fi
     step_number=$(($step_number+1))
     if [ "$step_number" -ge "$max_number_of_steps_per_episode" ]
