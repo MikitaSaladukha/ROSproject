@@ -370,6 +370,23 @@ function movingFront2() {
       ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.02, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
   fi
 
+  restart_lag_counter=0
+  i=$(ros2 topic echo --once /scan -f)
+  while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+    i=$(ros2 topic echo --once /scan -f)
+    sleep 1
+    echo "restart countdown: "$((25-$restart_lag_counter))
+    restart_lag_counter=$(($restart_lag_counter+1))
+    if [ "$restart_lag_counter" -ge "25" ]
+    then
+      restart="True"
+      echo "restarting"
+      return
+    fi
+  done
+
+  moving=($(python3 movingFront.py $i $side "0.89" "0.97"))
+
   #sleep 2
   while [ "moving" = "$moving" ]; do
     c=($(cat commands.txt))
@@ -377,6 +394,20 @@ function movingFront2() {
       then
         break
     fi
+    restart_lag_counter=0
+    i=$(ros2 topic echo --once /scan -f)
+    while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+      i=$(ros2 topic echo --once /scan -f)
+      sleep 1
+      echo "restart countdown: "$((25-$restart_lag_counter))
+      restart_lag_counter=$(($restart_lag_counter+1))
+      if [ "$restart_lag_counter" -ge "25" ]
+      then
+        restart="True"
+        echo "restarting"
+        return
+      fi
+    done
 
     distanceAngle=($(python3 getDistanceFromAngle.py $i "0"))
     tempDif=($(python3 diffF1_F2.py $distanceAngle $slow_down_distance))
@@ -426,6 +457,21 @@ function movingFront2() {
         ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
     fi
 
+    restart_lag_counter=0
+    i=$(ros2 topic echo --once /scan -f)
+    while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
+      i=$(ros2 topic echo --once /scan -f)
+      sleep 1
+      echo "restart countdown: "$((25-$restart_lag_counter))
+      restart_lag_counter=$(($restart_lag_counter+1))
+      if [ "$restart_lag_counter" -ge "25" ]
+      then
+        restart="True"
+        echo "restarting"
+        return
+      fi
+    done
+
     close_t2=($(python3 getClosestAngleDist.py $i $collision_distance)) # restart if collision
     sideTemp=${close_t2[-1]}
     echo "sideTemp="$sideTemp
@@ -440,7 +486,6 @@ function movingFront2() {
     #ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.02, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
 
     echo "check GOAL"
-    i=$(ros2 topic echo --once /odom)
     restart_lag_counter=0
     i=$(ros2 topic echo --once /odom)
     while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
