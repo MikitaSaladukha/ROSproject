@@ -357,35 +357,19 @@ function movingFront2() {
   done
 
   distanceAngle=($(python3 getDistanceFromAngle.py $i "0"))
-  tempDif=($(python3 diffF1_F2.py $distanceAngle $slow_down_distance))
+  tempDif=($(python3 diffF1_F2.py $distanceAngle "0.33"))
   bigger0=($(python3 biggerThanZero.py $tempDif))
   distanceAngle=($(python3 getDistanceFromAngle.py $i $ZAPAS_PO_UGLU))
-  tempDif=($(python3 diffF1_F2.py $distanceAngle $slow_down_distance))
+  tempDif=($(python3 diffF1_F2.py $distanceAngle "0.33"))
   bigger1=($(python3 biggerThanZero.py $tempDif))
   distanceAngle=($(python3 getDistanceFromAngle.py $i $((360-$ZAPAS_PO_UGLU))))
-  tempDif=($(python3 diffF1_F2.py $distanceAngle $slow_down_distance))
+  tempDif=($(python3 diffF1_F2.py $distanceAngle "0.33"))
   bigger2=($(python3 biggerThanZero.py $tempDif))
   if [ "False" = "$bigger0" -o "False" = "$bigger1" -o "False" = "$bigger2" ]
     then
-      ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.02, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
-  fi
-
-  restart_lag_counter=0
-  i=$(ros2 topic echo --once /scan -f)
-  while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
-    i=$(ros2 topic echo --once /scan -f)
-    sleep 1
-    echo "restart countdown: "$((25-$restart_lag_counter))
-    restart_lag_counter=$(($restart_lag_counter+1))
-    if [ "$restart_lag_counter" -ge "25" ]
-    then
-      restart="True"
-      echo "restarting"
+      ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
       return
-    fi
-  done
-
-  moving=($(python3 movingFront.py $i $side "0.89" "0.97"))
+  fi
 
   #sleep 2
   while [ "moving" = "$moving" ]; do
