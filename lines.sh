@@ -1197,7 +1197,7 @@ function bugMotionQ_vfh() {
         return
       fi
     done
-    close_t=($(python3 getClosestAngleDist.py $i "1.31")) #было 0.93
+    close_t=($(python3 getClosestAngleDist.py $i "2.31")) #было 0.9, потом 1.31
     sideTemp=${close_t[-1]}
     angle=${close_t[-2]}
     echo "sideTemp="$sideTemp
