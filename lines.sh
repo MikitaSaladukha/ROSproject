@@ -8,7 +8,7 @@ targetX="3"
 targetY="3"
 max_number_of_steps_per_episode=50
 max_episodes_number=100
-max_episode_reward="100.0"
+max_episode_reward="500.0"
 #cabinet end
 
 export simualtion_area="$simualtion_area"
