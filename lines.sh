@@ -342,7 +342,7 @@ function movingFront2() {
     #x: = 1.59, 1.0, 0.94, 0.85, 0.75 - не огибает, слишком быстро
     # x=0.65 - врезается, 0.55- слишком медленно
 
-  ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.25, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+  ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
   restart_lag_counter=0
   i=$(ros2 topic echo --once /scan -f)
   while [ "$i" = "Waiting for at least 1 matching subscription(s)..." ]; do
