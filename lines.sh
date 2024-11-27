@@ -304,7 +304,8 @@ function roundToTargetAngle() {
 slow_down_distance="1.66"
 speed_start="0.2" #было 0.6
 speed_next="0.1" #было 0.3
-
+good1="false"
+good2="false"
 function movingFront2() {
   moving="moving"
   restart_lag_counter=0
@@ -1170,6 +1171,15 @@ function bugMotionLeftSide() {
       echo "restarting"
       return
   fi
+  if [ $good1 = "false" -o $good2 = "false" ]
+    then
+      goal="false"
+    else
+      echo "goal REACHED"
+      ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+      goal="true"
+      return
+  fi
 }
 
 function bugMotionRightSide() {
@@ -1178,6 +1188,15 @@ function bugMotionRightSide() {
   if [ "$restart" = "True" ]
     then
       echo "restarting"
+      return
+  fi
+  if [ $good1 = "false" -o $good2 = "false" ]
+    then
+      goal="false"
+    else
+      echo "goal REACHED"
+      ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+      goal="true"
       return
   fi
 }
@@ -1218,9 +1237,18 @@ function bugMotionQ_vfh() {
               return
           fi
     fi
+    if [ $good1 = "false" -o $good2 = "false" ]
+      then
+        goal="false"
+      else
+        echo "goal REACHED"
+        ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+        goal="true"
+        return
+    fi
 
 }
-``
+
 total_episode_reward="0"
 function motionAccordingToQtable() {
   i=$(ros2 topic echo --once /odom)
@@ -1272,6 +1300,15 @@ function motionAccordingToQtable() {
           return
       fi
   fi
+  if [ $good1 = "false" -o $good2 = "false" ]
+  then
+    goal="false"
+  else
+    echo "goal REACHED"
+    ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+    goal="true"
+    return
+fi
   c=($(cat commands.txt))
   if [ $c = "pauseQ" ]
     then
@@ -1332,6 +1369,8 @@ function motionAccordingToQtable() {
 
 
 function OneEpisodeMotion() {
+  time1=($(python3 getTime.py))
+  echo "Start time="$time1 >> time.txt
   set_global=($(python3 global_values.py $targetX $targetY))
   echo ${set_global[0]}" "${set_global[1]}" "${set_global[2]}" "${set_global[3]}" "${set_global[4]}" "${set_global[5]}" "${set_global[6]}" "${set_global[7]}
   echo "episode_started"
@@ -1422,7 +1461,8 @@ function OneEpisodeMotion() {
   done
 
   echo "one_learning_episode_FINISHED"
-
+  time1=($(python3 getTime.py))
+  echo "End time="$time1 >> time.txt
 
 }
 motionVariant="vfh"
