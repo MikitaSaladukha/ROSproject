@@ -1,13 +1,13 @@
 #!/bin/bash
 source /opt/ros/humble/setup.bash
 #cabinet begin
-#targetX="4"
-#targetY="3"
+targetX="3"
+targetY="3"
 #cabinet end
 
 #cubes cilinders begin
-targetX="9"
-targetY="0"
+#targetX="9"
+#targetY="0"
 #cubes cilinders end
 
 #cubes:
@@ -926,6 +926,8 @@ function archMotion3() {
     done
     time=($(python3 getTime.py))
     echo "Start time="$time1" End time="$time
+
+    echo "Start time="$time1" End time="$time >> time.txt
 }
 
 #archMotion
