@@ -323,7 +323,7 @@ function turn90() {
   ros2 topic pub --once /cmd_vel geometry_msgs/Twist '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
 }
 
-targetX="4"
+targetX="3"
 targetY="3"
 
 set_k_b $targetX $targetY
@@ -405,6 +405,7 @@ function archMotion() {
     done
     time=($(python3 getTime.py))
     echo "Start time="$time1" End time="$time
+    echo "Start time="$time1" End time="$time >> time.txt
 }
 
 archMotion
