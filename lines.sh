@@ -1269,7 +1269,7 @@ function motionAccordingToQtable() {
   Xprev=${XYcurrent[0]};
   Yprev=${XYcurrent[1]};
 
-  get_from_blockchain
+#  get_from_blockchain
 
   motionVariant=($(python3 get_qtable_action.py $Xprev $Yprev))
   echo $motionVariant
@@ -1363,7 +1363,7 @@ fi
 
   total_episode_reward=($(python3 summValuesFloat.py ${qtableUpdated[12]} $total_episode_reward))
 
-  save_to_blockchain
+#  save_to_blockchain
 }
 
 
